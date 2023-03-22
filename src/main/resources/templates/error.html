@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <title>Daily Callbacks | Error</title>
+</head>
+<body>
+<div th:replace="header :: header"></div>
+<div class="px-4 py-5 text-center">
+    <h1 class="display-5 fw-bold">Oops... ⚒ (⊙_◎) </h1>
+    <div class="col-lg-6 mx-auto">
+        <h3 class="display-5 text-center" th:text="${errorCode}">200</h3>
+        <p class="lead mb-4" th:text="${errorText}">
+            It seems like the page you're looking for either went for a wonder...<br>
+            or never really existed to begin with.
+        </p>
+    </div>
+    <div class="px-4 py-3 text-center">
+        <h1 style="color:#02999f">🧙‍<br>The little Snippet who tried</h1>
+        <p style="color:#029f0b">
+            He did a crawl, he did a scan<br>
+            Searching the web as fast as he can<br>
+            Scanned and Crawled high and low<br>
+            Going places not many can go<br>
+            The little Snippet tried and tried<br>
+            With no results the Thread has died<br>
+        </p>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

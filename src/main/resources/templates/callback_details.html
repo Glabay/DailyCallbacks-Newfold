@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <title>Daily Callbacks | Callbacks</title>
+</head>
+<style>
+    .first-button {
+        color: rgb(255, 255, 255);
+        border-radius: 5px;
+        border: none;
+        padding: 9px;
+        background: rgb(13, 110, 252);
+        transition: box-shadow .35s ease !important;
+        outline: none;
+     }
+
+    .first-button:active {
+        background-color: rgb(2, 42, 112);
+        color: #fff;
+        border: none;
+    }
+
+    .popup .content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-150%) scale(0);
+        width: 350px;
+        height: 580px;
+        z-index: 2;
+        text-align: center;
+        padding: 10px;
+        border-radius: 5px;
+        background: #dfdfdf;
+        z-index: 1;
+    }
+
+    .popup.active .content {
+         transition: all 300ms ease-in-out;
+         transform: translate(-50%,-50%) scale(1);
+     }
+
+    .popup .close-btn {
+        position: absolute;
+        right: 15px;
+        top: 10px;
+        width: 30px;
+        height: 30px;
+        color: white;
+        font-size: 14px;
+        text-align: center;
+        border-radius: 50%;
+        padding: 4px 5px 7px 5px;
+        background: #237be6;
+
+    }
+
+    .input-field .validate {
+        padding: 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        color: #000000;
+        background: #ffffff;
+        border: 2px solid rgb(214, 214, 214);
+        width: 270px;
+        outline: none;
+    }
+
+    .second-button {
+        color: white;
+        font-size: 18px;
+        font-weight: 500;
+        margin-top: 20px;
+        padding: 15px 40px;
+        border-radius: 5px;
+        border: none;
+        background: #05438f;
+        transition: box-shadow .35s ease !important;
+        outline: none;
+    }
+
+    .second-button:active{
+        background: linear-gradient(145deg,#222222, #292929);
+        border: none;
+        outline: none;
+    }
+</style>
+<body>
+<div th:replace="header :: header"></div>
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <h3 class="card-title" th:text="${callback.callbackCase}">IN-0032</h3>
+            <h5 class="card-subtitle" th:text="${callback.time}">10:00 AM</h5><br>
+            <h5>Owner:</h5>
+            <p th:text="${callback.agent}">m.glabay</p>
+            <h5>Case Notes:</h5>
+            <p th:text="${callback.notes}">Interactive Interview Due: 08/21/2022</p>
+            <h5>Actions:</h5>
+            <a class="first-button btn-primary" href="#" onclick="openWbdNoteEntry()">Add Note</a>
+            <a class="btn btn-primary" style="margin-bottom: 7px" href="#">Complete</a>
+        </div>
+    </div>
+    <div class="popup" id="popup-1">
+        <div class="content">
+            <form action="#" th:action="@{/callback_details/addNote(id=${detailIndex})}" th:object="${newCallbackDetails}" method="post">
+                <div class="close-btn" onclick="togglePopup()">❌</div>
+                <h1>WBC Note</h1>
+                <div class="input-field"><input placeholder="Date" id="detailDate" th:field="*{cbDate}" class="validate"></div>
+                <div class="input-field"><input placeholder="Time" id="detailTime" th:field="*{cbTime}" class="validate"></div>
+                <div class="input-field"><input placeholder="Day" id="detailDay" th:field="*{cbDay}" class="validate"></div>
+                <div class="input-field"><input placeholder="Attempt" id="detailAttempt" th:field="*{cbAttempt}" class="validate"></div>
+                <div class="input-field"><input placeholder="Note" id="detailNote" th:field="*{cbNote}" class="validate"></div>
+                <button class="second-button" href="#" onclick="togglePopup()">Submit</button>
+            </form>
+        </div>
+    </div>
+    <div class="container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Day</th>
+                    <th scope="col">Attempt</th>
+                    <th scope="col">WBC Note</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr th:each="detail : ${callback.details}">
+                <td th:text="${detail.cbDate}">08/21/2022</td>
+                <td th:text="${detail.cbTime}">10:00 AM</td>
+                <td th:text="${detail.cbDay}">1</td>
+                <td th:text="${detail.cbAttempt}">1</td>
+                <td th:text="${detail.cbNote}">No answer, left VM, Email sent</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script>
+    function togglePopup() {
+        document.getElementById("popup-1").classList.toggle("active");
+
+    }
+
+    function openWbdNoteEntry() {
+        togglePopup()
+        var currentTime = new Date()
+        var month = currentTime.getMonth() + 1
+        var day = currentTime.getDate()
+        var year = currentTime.getFullYear()
+        var hours = currentTime.getHours()
+        var minutes = currentTime.getMinutes()
+
+
+        var caseDate = (month + "/" + day + "/" + year)
+        document.getElementById("detailDate").setAttribute("value", caseDate)
+
+        if (minutes < 10){
+            minutes = "0" + minutes
+        }
+        var caseTime = (hours + ":" + minutes + " ") + ((hours > 11) ? "PM" : "AM")
+        document.getElementById("detailTime").setAttribute("value", caseTime)
+
+    }
+</script>
+</body>
+</html>
