@@ -72,10 +72,10 @@
 
     <div><br></div>
 
-    <!--  Listing the Callbacks  -->
+    <!--  Callback Stats  -->
     <div class="container align-content-center" style="max-width: 1080px">
-        <details open>
-            <summary style="text-align:center; font-weight:bold; font-size: x-large">📞 Daily Callbacks ☎</summary>
+        <details>
+            <summary style="text-align:center; font-weight:bold; font-size: x-large">📊 Callback Stats 📉</summary>
             <div><br></div>
             <div class="container align-content-center" style="text-align: center">
                 <p style="font-weight:bold; font-size: x-large">Year To Date Stats</p>
@@ -116,7 +116,16 @@
                     </tbody>
                 </table>
             </div><br>
+        </details>
+    </div>
 
+    <div><br></div>
+
+    <!--  Listing the Callbacks  -->
+    <div class="container align-content-center" style="max-width: 1080px">
+        <details open>
+            <summary style="text-align:center; font-weight:bold; font-size: x-large">📞 Daily Callbacks ☎</summary>
+            <div><br></div>
             <p style="text-align:center; font-weight:bold; font-size: x-large">Filters</p>
             <div class="flex-container border-dark">
                 <div>
@@ -170,13 +179,13 @@
                         <td colspan="9" style="text-align: center">＼(ﾟｰﾟ＼) 🎉 No callbacks to display 🎉 ( ﾉ ﾟｰﾟ)ﾉ</td>
                     </tr>
                     <tr th:if="${#lists.size(callbacks) > 0}" th:each="callback : ${callbacks}">
-                        <td th:text="${callback.dateOfCallback}"></td>
-                        <td th:text="${callback.time}"></td>
-                        <td th:text="${callback.callbackCase}"></td>
-                        <td th:text="${callback.agent}"></td>
-                        <td th:text="${callback.callbackType}"></td>
-                        <td th:text="${callback.notes}"></td>
-                        <td th:text="${callback.assigned}"></td>
+                        <td th:text="${callback.dateOfCallback}"/>
+                        <td th:text="${callback.time}"/>
+                        <td th:text="${callback.callbackCase}"/>
+                        <td th:text="${callback.agent}"/>
+                        <td th:text="${callback.callbackType}"/>
+                        <td th:text="${callback.notes}"/>
+                        <td th:text="${callback.assigned}"/>
                         <td>
                             <a class="btn btn-primary" href="#" th:href="@{/callback_details/{id}(id=${callback.uid})}">View</a>
                         </td>
@@ -186,7 +195,7 @@
                     </tr>
                     </tbody>
                 </table>
-            </div>
+            </div><br>
         </details>
     </div>
 
