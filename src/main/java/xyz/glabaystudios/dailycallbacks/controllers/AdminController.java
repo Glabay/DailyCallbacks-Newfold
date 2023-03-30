@@ -47,10 +47,8 @@ public class AdminController {
 			model.addAttribute("callbacks", callbacks);
 		//TODO: get the current year and pass it
 		YearToDateStats YTD = callbackService.fetchCallbackStatsForYearToDate(2023);
-		if (Objects.nonNull(YTD)) {
+		if (Objects.nonNull(YTD))
 			model.addAttribute("ytdStats", YTD);
-			System.out.println(YTD);
-		}
 
 		// return the template with the applicable modals
 		return "admin_cp";
