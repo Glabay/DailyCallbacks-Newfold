@@ -1,0 +1,49 @@
+.flex-container {
+    display: flex;
+    height: 196px;
+    justify-content: space-around;
+    background-color: #F4AE86;
+    flex-direction: row;
+}
+
+.flex-container > div {
+    background-color: #DD5228;
+    text-align:center;
+    width: 33%;
+    height: 100%;
+    margin: auto;
+}
+
+.flex-filter-container {
+    height: 100%;
+    flex-direction: column;
+}
+
+.flex-filter-container > button {
+    width: 33%;
+}
+
+.agentNew {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%) scale(1);
+}
+
+.body {
+    background-color: #EF7832;
+}
+
+details {
+    user-select: none;
+    background-color: #DD5228;
+}
+
+summary {
+    display: flex;
+    cursor: pointer;
+    background-color: #C13311;
+}
+
+summary::-webkit-details-marker {
+    display: none;
+}

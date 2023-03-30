@@ -1,56 +1,63 @@
 package xyz.glabaystudios.dailycallbacks.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import xyz.glabaystudios.dailycallbacks.data.model.Agent;
-import xyz.glabaystudios.dailycallbacks.data.model.BulkObject;
 import xyz.glabaystudios.dailycallbacks.data.model.Callback;
+import xyz.glabaystudios.dailycallbacks.data.model.uncached.CallbackFilter;
+import xyz.glabaystudios.dailycallbacks.data.model.uncached.CallbackType;
+import xyz.glabaystudios.dailycallbacks.data.model.uncached.YearToDateStats;
+import xyz.glabaystudios.dailycallbacks.services.AdminService;
 import xyz.glabaystudios.dailycallbacks.services.AgentService;
 import xyz.glabaystudios.dailycallbacks.services.CallbackService;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
+@AllArgsConstructor
 @Controller
 @RequestMapping(value="/admin")
 public class AdminController {
 
 	private final CallbackService callbackService;
-
 	private final AgentService agentService;
-
-	@Autowired
-	public AdminController(CallbackService callbackService, AgentService agentService) {
-		this.callbackService = callbackService;
-		this.agentService = agentService;
-	}
-
+	private final AdminService adminService;
 
 	@GetMapping("")
-	public String getAdminDashboard(Model model, Callback callback) {
-		List<Callback> callbacks = callbackService.findAll();
+	public String getAdminDashboard(Model model) {
+		List<String> callbackTypes = new ArrayList<>();
+		Arrays.stream(CallbackType.values()).toList().forEach(callbackType -> callbackTypes.add(callbackType.getCallbackTypeName()));
+		// The empty templates for Input
+		model.addAttribute("callback", new Callback());
+		model.addAttribute("callbackTypes", callbackTypes);
+		model.addAttribute("newAgent", new Agent());
+		model.addAttribute("adminCallbackFilter", new CallbackFilter());
+		model.addAttribute("selectedMonth", new ArrayList<>());
+
+		// fetch a list of agents
 		List<Agent> agents = agentService.findAll();
-		// quick check if we're not null and not empty
-		if (!Objects.isNull(callbacks) && !callbacks.isEmpty()) {
-			model.addAttribute("callbacks", callbacks);
-			model.addAttribute("callback", new Callback());
-			model.addAttribute("bulkObject", new BulkObject());
+		// check their not null, or empty; before adding them to the model
+		if (Objects.nonNull(agents) && !agents.isEmpty())
 			model.addAttribute("agents", agents);
-			model.addAttribute("newAgent", new Agent());
-			model.addAttribute("module", "callbacks");
+		// fetch a list of callbacks
+		List<Callback> callbacks = callbackService.findAll();
+		// Check they're not null or empty; before adding them to the model
+		if (Objects.nonNull(callbacks) && !callbacks.isEmpty())
+			model.addAttribute("callbacks", callbacks);
+		//TODO: get the current year and pass it
+		YearToDateStats YTD = callbackService.fetchCallbackStatsForYearToDate(2023);
+		if (Objects.nonNull(YTD)) {
+			model.addAttribute("ytdStats", YTD);
+			System.out.println(YTD);
 		}
+
+		// return the template with the applicable modals
 		return "admin_cp";
 	}
 
 	@PostMapping(value="/add/singleton")
 	public String addSingleCallback(Model model, @ModelAttribute("callback") Callback callback) {
-		System.out.println("Submitted: " + callback);
 		if (!Objects.isNull(callback) && !missingData(callback)) {
 			callbackService.save(callback);
 			return "redirect:/admin";
@@ -68,44 +75,48 @@ public class AdminController {
 		return "redirect:/error";
 	}
 
-	@PostMapping(value="/add/bulk")
-	public String addBulkCallbacks(Model model, @ModelAttribute("bulkObject") BulkObject bulkObject) {
-		List<String> callbackObjects = List.of(bulkObject.getDataToParse().split("\n"));
-		List<Callback> callbackList = new ArrayList<>();
 
-		for (String stringData : callbackObjects) {
-			if (stringData.length() < 5) {
-				System.out.println("Oops.. Something went wrong here...");
-				System.out.println(stringData);
-				continue;
-			}
-			// break it down
-			String[] data = stringData.split("\t");
-			// parse it
-			String cbDate = data[0];
-			String cbTime = data[1];
-			String cbCase = data[2];
-			String cbOwner = data[3];
-			String cbPegaNote = data[4];
-
-			Callback temp = new Callback();
-			temp.setDateOfCallback(cbDate);
-			temp.setTime(cbTime);
-			temp.setCallbackCase(cbCase);
-			temp.setAgent(cbOwner);
-			temp.setNotes(cbPegaNote);
-
-			callbackList.add(temp);
+	@GetMapping(value="/filters/apply")
+	public String applyFilter(Model model, @RequestParam Map<String, String> params) {
+		System.out.println("Submitting Params: " + params.toString());
+		List<String> callbackTypes = new ArrayList<>();
+		Arrays.stream(CallbackType.values()).toList().forEach(callbackType -> callbackTypes.add(callbackType.getCallbackTypeName()));
+		CallbackFilter filter = new CallbackFilter();
+		if (params.isEmpty()) {
+			// redirect to the error page with a note the filter was empty
+			return "redirect:/error";
+		}
+		// Filter the params
+		for (String filterOption : params.keySet()) {
+			if (Objects.equals("specificDate", filterOption)) filter.setSpecificDate(params.get(filterOption));
+			if (Objects.equals("filterStartDay", filterOption)) filter.setFilterStartDay(params.get(filterOption));
+			if (Objects.equals("filterEndDay", filterOption)) filter.setFilterEndDay(params.get(filterOption));
+			if (Objects.equals("filterByAgent", filterOption)) filter.setFilterByAgent(params.get(filterOption));
+			if (Objects.equals("filterByStatus", filterOption)) filter.setFilterByStatus(params.get(filterOption));
 		}
 
-		if (!callbackList.isEmpty()) {
-			callbackList.forEach(callbackService::save);
-			return "redirect:/admin";
-		}
+		model.addAttribute("callbackTypes", callbackTypes);
+		model.addAttribute("newAgent", new Agent());
+		model.addAttribute("adminCallbackFilter", new CallbackFilter());
+		model.addAttribute("selectedMonth", new ArrayList<>());
 
-		return "redirect:/error";
+		// fetch a list of agents
+		List<Agent> agents = agentService.findAll();
+		// check their not null, or empty; before adding them to the model
+		if (Objects.nonNull(agents) && !agents.isEmpty())
+			model.addAttribute("agents", agents);
+		// fetch a list of callbacks
+		List<Callback> callbacks = callbackService.findAll();
+		// Check they're not null or empty; before adding them to the model
+		if (Objects.nonNull(callbacks) && !callbacks.isEmpty())
+			model.addAttribute("callbacks", adminService.getFilteredCallbacks(filter, callbacks));
+		//TODO: get the current year and pass it
+		YearToDateStats YTD = callbackService.fetchCallbackStatsForYearToDate(2023);
+		if (Objects.nonNull(YTD))
+			model.addAttribute("ytdStats", YTD);
+
+		return "admin_cp";
 	}
-
 
 	private boolean missingData(Callback callback) {
 		if (callback.getCallbackCase().isBlank()) return true;

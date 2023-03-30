@@ -1,28 +1,27 @@
 package xyz.glabaystudios.dailycallbacks.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import xyz.glabaystudios.dailycallbacks.data.model.Agent;
 import xyz.glabaystudios.dailycallbacks.data.model.Callback;
 import xyz.glabaystudios.dailycallbacks.data.model.CallbackDetails;
+import xyz.glabaystudios.dailycallbacks.data.model.uncached.CallbackType;
+import xyz.glabaystudios.dailycallbacks.data.model.uncached.YearToDateStats;
 import xyz.glabaystudios.dailycallbacks.data.repo.CallbackDetailsRepository;
 import xyz.glabaystudios.dailycallbacks.data.repo.CallbackRepository;
 
+import java.time.Month;
+import java.time.format.TextStyle;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
+@AllArgsConstructor
 @Service
 public class CallbackService {
 
 	private final CallbackRepository callbackRepository;
-
 	private final CallbackDetailsRepository callbackDetailsRepository;
 
-	@Autowired
-	public CallbackService(CallbackRepository callbackRepository, CallbackDetailsRepository callbackDetailsRepository) {
-		this.callbackRepository = callbackRepository;
-		this.callbackDetailsRepository = callbackDetailsRepository;
-	}
 
 	/**
 	 * Find all Callbacks in the database
@@ -30,6 +29,14 @@ public class CallbackService {
 	 */
 	public List<Callback> findAll() {
 		return callbackRepository.findAll();
+	}
+
+	/**
+	 * Find all Callbacks in the database
+	 * @return a List of callbacks
+	 */
+	public List<Callback> findAllOpenCallbacks() {
+		return callbackRepository.findByCompletedFalse();
 	}
 
 	/**
@@ -60,5 +67,34 @@ public class CallbackService {
 
 	public void save(List<CallbackDetails> details) {
 		callbackDetailsRepository.saveAll(details);
+	}
+
+	public YearToDateStats fetchCallbackStatsForYearToDate(int year) {
+		YearToDateStats yearToDateStats = new YearToDateStats();
+		// Get a complete List of all callbacks
+		List<Callback> totalCallbackList = findAll();
+		// pre-checks to make sure we have a list with content
+		if (Objects.nonNull(totalCallbackList) && !totalCallbackList.isEmpty()) {
+			// loop over each of the callbacks within the list
+			totalCallbackList.forEach(callback -> {
+				String[] cbDateData = callback.getDateOfCallback().split("-");
+				int cbYear = Integer.parseInt(cbDateData[0]); // year of this CB
+				// if the callback is from the requested year
+				if (Objects.equals(cbYear, year)) {
+					// get the type of the callback
+					String cbType = callback.getCallbackType();
+					// parse the callback type
+					CallbackType type = CallbackType.valueOf(cbType);
+					// parse the Month of this callback
+					int month = Integer.parseInt(cbDateData[1].startsWith("0") ? cbDateData[1].replace("0", "") : cbDateData[1]);
+					String monthSr = Month.of(month).getDisplayName(TextStyle.SHORT_STANDALONE, Locale.CANADA).replace(".", "");
+					// update the record
+					yearToDateStats.updateCallType(type.getCallbackTypeName(), monthSr);
+				}
+				// else the callback was not of the requested year
+			});
+			return yearToDateStats;
+		}
+		return null;
 	}
 }

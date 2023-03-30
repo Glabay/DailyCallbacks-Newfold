@@ -1,43 +1,113 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
+    <!--  Scripts to preload  -->
+    <link href="/webjars/bootstrap/5.2.3/css/bootstrap.css" rel="stylesheet"/>
+    <script type="text/javascript" src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-    <title>Daily Callbacks | Callbacks</title>
+    <title>WBC Tracker | Callbacks</title>
 </head>
 <body>
-<div th:replace="header :: header"></div>
-<div class="container align-content-center border" >
-    <h1 class="text-center">Callbacks</h1>
-    <table class="table table-striped table-bordered">
-        <thead>
+    <div th:replace="~{header::header}"></div>
+    <!--  Adding Single Callback  -->
+    <div class="container align-content-center border"><br>
+        <p class="text-center" style="text-align:center; font-weight:bold; font-size: x-large">Add New Callback Entry</p>
+        <form action="#" th:action="@{/callbacks/new}" th:object="${callback}" method="post">
+        <table class="table table-striped table-bordered mx-auto" style="width:100%">
+            <thead>
             <tr>
                 <th scope="col">Date</th>
                 <th scope="col">Time</th>
                 <th scope="col">Case</th>
                 <th scope="col">Agent</th>
+                <th scope="col">Call Type</th>
                 <th scope="col">Notes</th>
-                <th scope="col">Actions</th>
             </tr>
-        </thead>
-        <tbody>
-        <tr th:if="${#lists.isEmpty(callbacks)}">
-            <td colspan="6" th:align="center">＼(ﾟｰﾟ＼) 🎉 No callbacks to display 🎉 ( ﾉ ﾟｰﾟ)ﾉ</td>
-        </tr>
-        <tr th:each="callback : ${callbacks}">
-            <td th:text="${callback.dateOfCallback}">08/21/2022</td>
-            <td th:text="${callback.time}">10:00 AM</td>
-            <td th:text="${callback.callbackCase}">IN-0032</td>
-            <td th:text="${callback.agent}">m.glabay</td>
-            <td th:text="${callback.notes}">Interactive Interview Due: 08/21/2022</td>
-            <td>
-                <a class="btn btn-primary" href="#" th:href="@{/callback_details/{id}(id=${callback.uid})}">Action</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <label>
+                        <input type="date" th:field="${callback.dateOfCallback}">
+                    </label>
+                </td>
+                <td>
+                    <label>
+                        <input type="time" th:field="*{time}">
+                    </label>
+                </td>
+                <td>
+                    <label>
+                        <input type="text" th:field="*{callbackCase}">
+                    </label>
+                </td>
+                <td>
+                    <label>
+                        <input type="text" th:field="*{agent}">
+                    </label>
+                </td>
+                <td>
+                    <label>
+                        <select th:field="*{callbackType}">
+                            <option value="0">Select Callback Type</option>
+                            <option th:each="newCallbackType : ${callbackTypes}" th:value="${newCallbackType}" th:text="${newCallbackType.getCallbackTypeName()}"></option>
+                        </select>
+                    </label>
+                </td>
+                <td>
+                    <label>
+                        <input type="text" th:field="*{notes}">
+                    </label> <br>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary" style="margin-left: 45%">Submit Callback 📞</button>
+        <br><br>
+        </form><br>
+    </div>
+    <!--  Callbacks  -->
+    <div class="container align-content-center border">
+        <h1 class="text-center">Callbacks</h1>
+        <table class="table table-striped table-bordered">
+            <thead style="text-align:center">
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Case</th>
+                    <th scope="col">Agent</th>
+                    <th scope="col">Call Type</th>
+                    <th scope="col">Notes</th>
+                    <th scope="col">Assigned</th>
+                    <th scope="col" colspan="2">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(callbacks)}">
+                <td colspan="8" th:align="center">＼(ﾟｰﾟ＼) 🎉 No callbacks to display 🎉 ( ﾉ ﾟｰﾟ)ﾉ</td>
+            </tr>
+            <tr th:each="callback : ${callbacks}">
+                <td th:text="${callback.dateOfCallback}">08/21/2022</td>
+                <td th:text="${callback.time}">10:00 AM</td>
+                <td th:text="${callback.callbackCase}">IN-0032</td>
+                <td th:text="${callback.agent}">m.glabay</td>
+                <td th:text="${callback.callbackType}">Unscheduled IN</td>
+                <td th:text="${callback.notes}">Interactive Interview Due: 08/21/2022</td>
+                <td th:text="${callback.assigned}">assignedAgent</td>
+                <td>
+                    <a class="btn btn-primary" href="#" th:href="@{/callback_details/{id}(id=${callback.uid})}">Action</a>
+                </td>
+                <td>
+                    <a class="btn btn-primary" href="#" th:href="@{/callback/claim/{id}(id=${callback.uid})}">Claim</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <!--  Scripts  -->
+    <script src="https://github.com/tempusdominus/bootstrap-4/blob/master/src/js/tempusdominus-bootstrap-4.js"></script>
 </body>
 </html>

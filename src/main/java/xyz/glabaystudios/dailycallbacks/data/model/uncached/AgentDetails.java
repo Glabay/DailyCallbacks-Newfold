@@ -1,4 +1,4 @@
-package xyz.glabaystudios.dailycallbacks.data.model;
+package xyz.glabaystudios.dailycallbacks.data.model.uncached;
 
 public class AgentDetails {
 
