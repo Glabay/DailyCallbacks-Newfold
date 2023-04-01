@@ -1,49 +1,66 @@
 package xyz.glabaystudios.dailycallbacks.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import xyz.glabaystudios.dailycallbacks.data.model.Agent;
 import xyz.glabaystudios.dailycallbacks.data.model.Callback;
 import xyz.glabaystudios.dailycallbacks.data.model.uncached.CallbackType;
+import xyz.glabaystudios.dailycallbacks.services.AgentService;
 import xyz.glabaystudios.dailycallbacks.services.CallbackService;
 
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+@RequiredArgsConstructor
 @Controller
 @RequestMapping(value="/callbacks")
 public class CallbacksController {
 
 	private final CallbackService callbackService;
-
-	@Autowired
-	public CallbacksController(CallbackService callbackService) {
-		this.callbackService = callbackService;
-	}
+	private final AgentService agentService;
 
 	@GetMapping
 	public String getDailyCallbacks(Model model) {
 		List<CallbackType> types = Arrays.stream(CallbackType.values()).toList();
-		// fetch the callback list
-		//TODO: Find all callbacks for today's date
-		List<Callback> callbacks = callbackService.findAll();
-		// a blank instance of the Object so the Thymeleaf template has something to model the input to when entering a new callback
-		Callback newCallback = new Callback();
-		// add in default variables
-		// TODO: Check the security context for the user, and get the agent's name to autofill
-		model.addAttribute("callback", newCallback);
 		// add in the available callback types
 		model.addAttribute("callbackTypes", types);
+
+		// parse todays date
+		Date todaysDate = Date.from(Instant.now());
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyy-MM-dd");
+		String todaysDateFormatted = dateFormat.format(todaysDate);
+		// fetch the callback list for today
+		List<Callback> callbacks = callbackService.findOpenCallbacksForProvidedDate(todaysDateFormatted);
 		// quick check if we're not null and not empty
 		if (!Objects.isNull(callbacks) && !callbacks.isEmpty()) {
+			// TODO: Fetch all Callback Details, with
 			// TODO: Sort by time;
 			model.addAttribute("callbacks", callbacks); // The callbacks
 			model.addAttribute("module", "callbacks");
 		}
+
+		// a blank instance of the Object so the Thymeleaf template has something to model the input to when entering a new callback
+		Callback newCallback = new Callback();
+		// add in default variables
+		// TODO: Check the security context for the user, and get the agent's name to autofill
+		newCallback.setAgent("m.glabay");// temp value for testing
+		// add the object to the model
+		model.addAttribute("cbDataObject", newCallback);
+
+		// fetch a list of agents
+		List<Agent> agents = agentService.findAll();
+		// check their not null, or empty; before adding them to the model
+		if (Objects.nonNull(agents) && !agents.isEmpty())
+			model.addAttribute("agents", agents);
+
 		// else there was thing that went wrong.
 		return "callbacks";
 	}
@@ -56,8 +73,16 @@ public class CallbacksController {
 	}
 
 	@PostMapping(value="/new")
-	public String addSingleCallback(Model model, @ModelAttribute("callback") Callback callback) {
+	public String addSingleCallback(@ModelAttribute("callback") Callback callback) {
 		if (!Objects.isNull(callback)) {
+			// check and format the time for display
+			String[] timeData = callback.getTime().split(":");
+			int hours = Integer.parseInt(timeData[0]);
+			boolean meridiem = hours >= 12;
+			String callbackTime = "%d:%s %s".formatted(((hours > 12) ? (hours - 12) : hours), timeData[1], (meridiem ? "PM" : "AM"));
+			callback.setTime(callbackTime);
+			// make the assigned the owner
+			callback.setAssigned(callback.getAgent());
 			callbackService.save(callback);
 			return "redirect:/callbacks";
 		}

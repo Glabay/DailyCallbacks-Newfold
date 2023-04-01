@@ -11,8 +11,8 @@
 
     <title>WBC Tracker | Home</title>
 </head>
-<body>
-    <div th:replace="~{header::header}"></div>
+<body class="body">
+    <div th:replace="~{fragments/header::header}"></div>
     <div class="px-4 text-center">
         <h1 class="display-5 fw-bold">Glabay Studios | WBC Tracker</h1>
         <div class="col-lg-6 mx-auto">
@@ -20,7 +20,7 @@
             <p class="lead mb-4 py-2">
                 🖥 Welcome to the WBC Tracker system 💻<br><br>
                 There are currently <a th:text="${totalAgents}">##</a> agents in the database.<br><br>
-                There are currently <a th:text="${totalCallbacks}">##</a> callbacks for today.
+                There are currently <a th:text="${totalCallbacks}">##</a> callbacks in the database.
 
             </p>
         </div>

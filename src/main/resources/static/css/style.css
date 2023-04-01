@@ -47,3 +47,7 @@ summary {
 summary::-webkit-details-marker {
     display: none;
 }
+
+.table > :not(caption) > * > * {
+    padding: 2px
+}

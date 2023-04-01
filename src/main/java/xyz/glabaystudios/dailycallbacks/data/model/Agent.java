@@ -19,7 +19,7 @@ import xyz.glabaystudios.dailycallbacks.data.model.uncached.AgentDetails;
 public class Agent {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long uid;
 
 	private String agentEmail;

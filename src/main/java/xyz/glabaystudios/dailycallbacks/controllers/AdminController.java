@@ -64,10 +64,14 @@ public class AdminController {
 	}
 
 	@PostMapping(value="/add/agent")
-	public String addNewAgent(Model model, @ModelAttribute("newAgent") Agent newAgent) {
-		System.out.println("Submitted: " + newAgent);
+	public String addNewAgent(@ModelAttribute("newAgent") Agent newAgent) {
 		if (!Objects.isNull(newAgent)) {
-			agentService.save(newAgent);
+			Agent agent = new Agent();
+			agent.setAgentAccess(newAgent.getAgentAccess());
+			agent.setAgentPin(newAgent.getAgentPin());
+			agent.setAgentEmail(newAgent.getAgentEmail());
+			agent.setAgentUsername(newAgent.getAgentUsername());
+			agentService.save(agent);
 			return "redirect:/admin";
 		}
 		return "redirect:/error";

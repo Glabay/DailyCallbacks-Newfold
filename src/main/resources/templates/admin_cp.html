@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html   lang="en"
+        xmlns:th="http://www.thymeleaf.org">
 <head>
     <!--  Scripts to preload  -->
     <link href="/webjars/bootstrap/5.2.3/css/bootstrap.css" rel="stylesheet"/>
@@ -16,189 +16,191 @@
 </head>
 <body class="body">
 
-<div th:replace="~{header::header}"></div>
-    <div class="px-4 text-center mx-auto">
-        <p class="display-6 fw-bold text-lg-center">🦸‍♀️ Welcome to J.A.R.V.I.S.</p><br>
-    </div>
-    <!--  Agent Details  -->
-    <div class="container align-content-center" style="max-width: 1080px">
-        <details>
-            <summary style="text-align:center; font-weight:bold; font-size: x-large">🕵 Agent Details 🕵</summary>
-            <div><br></div>
-            <!--  Add new Agent  -->
-            <div class="container align-content-center"><br>
-                <p class="text-center" style="text-align:center; font-weight:bold; font-size: x-large">Add New Agent</p>
-                <form action="#" th:action="@{/admin/add/agent}" th:object="${newAgent}" method="post">
-                    <label class="agentNew">
-                        <input type="text" placeholder="Agent Email" style="width:250px; text-align:center" th:field="*{agentEmail}">
-                        <input type="text" placeholder="Agent Username" style="width:250px; text-align:center" th:field="*{agentUsername}"><br>
-                        <input type="text" placeholder="PIN (optional)" style="width:250px; text-align:center" th:field="*{agentPin}">
-                        <input type="number" placeholder="0=WBC | 1=Pro-AM | 2=Sup" style="width:250px; text-align:center" min="0" max="2" th:field="*{agentAccess}">
-                    </label>
-                    <br><br><br>
-                    <button type="submit" class="btn btn-primary" style="margin-left: 50%; transform: translate(-50%) scale(1)">Add Agent</button>
-                    <br><br>
-                </form>
-            </div>
-            <!--  List all Agents  -->
-            <div class="container align-content-center"><br>
-                <p class="text-center" style="text-align:center; font-weight:bold; font-size: x-large">List of Agents</p>
-                <table class="table table-striped table-bordered">
-                    <thead>
-                    <tr>
-                        <th scope="col">Email</th>
-                        <th scope="col">Username</th>
-                        <th scope="col">First Name</th>
-                        <th scope="col">Last Name</th>
-                        <th scope="col">Primary Role</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:if="${#lists.isEmpty(agents)}">
-                        <td colspan="5" style="text-align: center"></td>
-                    </tr>
-                    <tr th:if="${#lists.size(agents) > 0}" th:each="agent : ${agents}">
-                        <td th:text="${agent.agentEmail}"></td>
-                        <td th:text="${agent.agentUsername}"></td>
-                        <td th:text="${agent.agentFirstName}"></td>
-                        <td th:text="${agent.agentLastName}"></td>
-                        <td th:text="${agent.getPrimaryRole()}"></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </details>
-    </div>
-
-    <div><br></div>
-
-    <!--  Callback Stats  -->
-    <div class="container align-content-center" style="max-width: 1080px">
-        <details>
-            <summary style="text-align:center; font-weight:bold; font-size: x-large">📊 Callback Stats 📉</summary>
-            <div><br></div>
-            <div class="container align-content-center" style="text-align: center">
-                <p style="font-weight:bold; font-size: x-large">Year To Date Stats</p>
-                <table class="table table-striped table-bordered border-dark">
-                    <thead>
-                    <tr>
-                        <th scope="col">Callback Type</th>
-                        <th scope="col">Jan</th>
-                        <th scope="col">Feb</th>
-                        <th scope="col">Mar</th>
-                        <th scope="col">Apr</th>
-                        <th scope="col">May</th>
-                        <th scope="col">Jun</th>
-                        <th scope="col">Jul</th>
-                        <th scope="col">Aug</th>
-                        <th scope="col">Sep</th>
-                        <th scope="col">Oct</th>
-                        <th scope="col">Nov</th>
-                        <th scope="col">Dec</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:if="${#lists.size(ytdStats.getCallTypeList()) > 0}" th:each="callbackType : ${ytdStats.getCallTypeList()}">
-                        <td th:text="${callbackType.key}"/>
-                        <td th:text="${callbackType.value.getMonthData('Jan')}"/>
-                        <td th:text="${callbackType.value.getMonthData('Feb')}"/>
-                        <td th:text="${callbackType.value.getMonthData('Mar')}"/>
-                        <td th:text="${callbackType.value.getMonthData('Apr')}"/>
-                        <td th:text="${callbackType.value.getMonthData('May')}"/>
-                        <td th:text="${callbackType.value.getMonthData('Jun')}"/>
-                        <td th:text="${callbackType.value.getMonthData('Jul')}"/>
-                        <td th:text="${callbackType.value.getMonthData('Aug')}"/>
-                        <td th:text="${callbackType.value.getMonthData('Sep')}"/>
-                        <td th:text="${callbackType.value.getMonthData('Oct')}"/>
-                        <td th:text="${callbackType.value.getMonthData('Nov')}"/>
-                        <td th:text="${callbackType.value.getMonthData('Dec')}"/>
-                    </tr>
-                    </tbody>
-                </table>
-            </div><br>
-        </details>
-    </div>
-
-    <div><br></div>
-
-    <!--  Listing the Callbacks  -->
-    <div class="container align-content-center" style="max-width: 1080px">
-        <details open>
-            <summary style="text-align:center; font-weight:bold; font-size: x-large">📞 Daily Callbacks ☎</summary>
-            <div><br></div>
-            <p style="text-align:center; font-weight:bold; font-size: x-large">Filters</p>
-            <div class="flex-container border-dark">
-                <div>
-                    <form class="flex-filter-container" action="#" th:action="@{/admin/filters/apply}" th:object="${adminCallbackFilter}" method="get">
-                        <label for="SpecificDay">Specific Day</label><br>
-                        <input id="SpecificDay" type="date" th:field="${adminCallbackFilter.specificDate}"><br><br>
-                        <button type="submit" class="btn btn-primary">Apply Filter</button>
+    <div th:replace="~{fragments/header::header}"></div>
+<!--    <aside th:replace="~{fragments/sidebar::sidebar}"></aside>-->
+    <div class="main-content">
+        <div class="px-4 text-center mx-auto">
+            <p class="display-6 fw-bold text-lg-center">🦸‍♀️ Welcome to the Admin Control Panel</p><br>
+        </div>
+        <!--  Agent Details  -->
+        <div class="container align-content-center">
+            <details>
+                <summary style="text-align:center; font-weight:bold; font-size: x-large">🕵 Agent Details 🕵</summary>
+                <div><br></div>
+                <!--  Add new Agent  -->
+                <div class="container align-content-center"><br>
+                    <p class="text-center" style="text-align:center; font-weight:bold; font-size: x-large">Add New Agent</p>
+                    <form action="#" th:action="@{/admin/add/agent}" th:object="${newAgent}" method="post">
+                        <label class="agentNew">
+                            <input type="text" placeholder="Agent Email" style="width:250px; text-align:center" th:field="*{agentEmail}">
+                            <input type="text" placeholder="Agent Username" style="width:250px; text-align:center" th:field="*{agentUsername}"><br>
+                            <input type="text" placeholder="PIN (optional)" style="width:250px; text-align:center" th:field="*{agentPin}">
+                            <input type="number" placeholder="0=WBC | 1=Pro-AM | 2=Sup" style="width:250px; text-align:center" min="0" max="2" th:field="*{agentAccess}">
+                        </label>
+                        <br><br><br>
+                        <button type="submit" class="btn btn-primary" style="margin-left: 50%; transform: translate(-50%) scale(1)">Add Agent</button>
+                        <br><br>
                     </form>
                 </div>
-                <div>
-                    <form class="flex-filter-container" action="#" th:action="@{/admin/filters/apply}" th:object="${adminCallbackFilter}" method="get">
-                        <label for="filterStartDay">Callbacks From</label><br>
-                        <input id="filterStartDay" type="date" th:field="${adminCallbackFilter.filterStartDay}"><br>
-                        <label for="filterEndDay">Callbacks Up Until</label><br>
-                        <input id="filterEndDay" type="date" th:field="${adminCallbackFilter.filterEndDay}"><br><br>
-                        <button type="submit" class="btn btn-primary">Apply Filter</button>
-                    </form>
-                </div>
-                <div>
-                    <form class="flex-filter-container" action="#" th:action="@{/admin/filters/apply}" th:object="${adminCallbackFilter}" method="get">
-                        <br>
-                        <input type="text" placeholder="Search by Agent" th:field="${adminCallbackFilter.filterByAgent}"><br>
-                        Search by Status<br>
-                        <input id="completedCases" type="radio" name="Status" value="complete" th:field="${adminCallbackFilter.filterByStatus}">
-                        <label for="completedCases">Complete</label><br>
-                        <input id="uncompletedCases" type="radio" name="Status" value="incomplete" th:field="${adminCallbackFilter.filterByStatus}">
-                        <label for="uncompletedCases">Incomplete</label><br><br>
+                <!--  List all Agents  -->
+                <div class="container align-content-center"><br>
+                    <p class="text-center" style="text-align:center; font-weight:bold; font-size: x-large">List of Agents</p>
+                    <table class="table table-striped table-bordered border-dark">
+                        <thead style="text-align:center">
+                        <tr>
+                            <th scope="col">Email</th>
+                            <th scope="col">Username</th>
+                            <th scope="col">First Name</th>
+                            <th scope="col">Last Name</th>
+                            <th scope="col">Primary Role</th>
+                        </tr>
+                        </thead>
+                        <tbody style="text-align:center">
+                        <tr th:if="${#lists.isEmpty(agents)}">
+                            <td colspan="5"></td>
+                        </tr>
+                        <tr th:if="${#lists.size(agents) > 0}" th:each="agent : ${agents}">
+                            <td th:text="${agent.agentEmail}"></td>
+                            <td th:text="${agent.agentUsername}"></td>
+                            <td th:text="${agent.agentFirstName}"></td>
+                            <td th:text="${agent.agentLastName}"></td>
+                            <td th:text="${agent.getPrimaryRole()}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div><br>
+            </details>
+        </div>
 
-                        <button type="submit" class="btn btn-primary">Apply Filter</button>
-                    </form>
+        <div><br></div>
+
+        <!--  Callback Stats  -->
+        <div class="container align-content-center">
+            <details>
+                <summary style="text-align:center; font-weight:bold; font-size: x-large">📊 Callback Stats 📉</summary>
+                <div><br></div>
+                <div class="container align-content-center" style="text-align: center">
+                    <p style="font-weight:bold; font-size: x-large">Year To Date Stats</p>
+                    <table class="table table-striped table-bordered border-dark">
+                        <thead>
+                        <tr>
+                            <th scope="col">Callback Type</th>
+                            <th scope="col">Jan</th>
+                            <th scope="col">Feb</th>
+                            <th scope="col">Mar</th>
+                            <th scope="col">Apr</th>
+                            <th scope="col">May</th>
+                            <th scope="col">Jun</th>
+                            <th scope="col">Jul</th>
+                            <th scope="col">Aug</th>
+                            <th scope="col">Sep</th>
+                            <th scope="col">Oct</th>
+                            <th scope="col">Nov</th>
+                            <th scope="col">Dec</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${#lists.size(ytdStats.getCallTypeList()) > 0}" th:each="callbackType : ${ytdStats.getCallTypeList()}">
+                            <td th:text="${callbackType.key}"/>
+                            <td th:text="${callbackType.value.getMonthData('Jan')}"/>
+                            <td th:text="${callbackType.value.getMonthData('Feb')}"/>
+                            <td th:text="${callbackType.value.getMonthData('Mar')}"/>
+                            <td th:text="${callbackType.value.getMonthData('Apr')}"/>
+                            <td th:text="${callbackType.value.getMonthData('May')}"/>
+                            <td th:text="${callbackType.value.getMonthData('Jun')}"/>
+                            <td th:text="${callbackType.value.getMonthData('Jul')}"/>
+                            <td th:text="${callbackType.value.getMonthData('Aug')}"/>
+                            <td th:text="${callbackType.value.getMonthData('Sep')}"/>
+                            <td th:text="${callbackType.value.getMonthData('Oct')}"/>
+                            <td th:text="${callbackType.value.getMonthData('Nov')}"/>
+                            <td th:text="${callbackType.value.getMonthData('Dec')}"/>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div><br>
+            </details>
+        </div>
+
+        <div><br></div>
+
+        <!--  Listing the Callbacks  -->
+        <div class="container align-content-center">
+            <details>
+                <summary style="text-align:center; font-weight:bold; font-size: x-large">📞 Daily Callbacks ☎</summary>
+                <div><br></div>
+                <p style="text-align:center; font-weight:bold; font-size: x-large">Filters</p>
+                <div class="flex-container border-dark">
+                    <div>
+                        <form class="flex-filter-container" action="#" th:action="@{/admin/filters/apply}" th:object="${adminCallbackFilter}" method="get">
+                            <label for="SpecificDay">Specific Day</label><br>
+                            <input id="SpecificDay" type="date" th:field="${adminCallbackFilter.specificDate}"><br><br>
+                            <button type="submit" class="btn btn-primary">Apply Filter</button>
+                        </form>
+                    </div>
+                    <div>
+                        <form class="flex-filter-container" action="#" th:action="@{/admin/filters/apply}" th:object="${adminCallbackFilter}" method="get">
+                            <label for="filterStartDay">Callbacks From</label><br>
+                            <input id="filterStartDay" type="date" th:field="${adminCallbackFilter.filterStartDay}"><br>
+                            <label for="filterEndDay">Callbacks Up Until</label><br>
+                            <input id="filterEndDay" type="date" th:field="${adminCallbackFilter.filterEndDay}"><br><br>
+                            <button type="submit" class="btn btn-primary">Apply Filter</button>
+                        </form>
+                    </div>
+                    <div>
+                        <form class="flex-filter-container" action="#" th:action="@{/admin/filters/apply}" th:object="${adminCallbackFilter}" method="get">
+                            <br>
+                            <input type="text" placeholder="Search by Agent" th:field="${adminCallbackFilter.filterByAgent}"><br>
+                            Search by Status<br>
+                            <input id="completedCases" type="radio" name="Status" value="complete" th:field="${adminCallbackFilter.filterByStatus}">
+                            <label for="completedCases">Complete</label><br>
+                            <input id="uncompletedCases" type="radio" name="Status" value="incomplete" th:field="${adminCallbackFilter.filterByStatus}">
+                            <label for="uncompletedCases">Incomplete</label><br><br>
+
+                            <button type="submit" class="btn btn-primary">Apply Filter</button>
+                        </form>
+                    </div>
                 </div>
-            </div>
-            <div><br></div>
-            <div id="adminCallbackTable" class="container align-content-center" style="text-align: center">
-                <p style="font-weight:bold; font-size: x-large">Callbacks</p>
-                <table class="table table-striped table-bordered border-dark">
-                    <thead style="text-align:center">
-                    <tr>
-                        <th scope="col">Date</th>
-                        <th scope="col">Time</th>
-                        <th scope="col">Case</th>
-                        <th scope="col">Agent</th>
-                        <th scope="col">Call Type</th>
-                        <th scope="col">Notes</th>
-                        <th scope="col">Assigned</th>
-                        <th scope="col" colspan="2">Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:if="${#lists.isEmpty(callbacks)}">
-                        <td colspan="9" style="text-align: center">＼(ﾟｰﾟ＼) 🎉 No callbacks to display 🎉 ( ﾉ ﾟｰﾟ)ﾉ</td>
-                    </tr>
-                    <tr th:if="${#lists.size(callbacks) > 0}" th:each="callback : ${callbacks}">
-                        <td th:text="${callback.dateOfCallback}"/>
-                        <td th:text="${callback.time}"/>
-                        <td th:text="${callback.callbackCase}"/>
-                        <td th:text="${callback.agent}"/>
-                        <td th:text="${callback.callbackType}"/>
-                        <td th:text="${callback.notes}"/>
-                        <td th:text="${callback.assigned}"/>
-                        <td>
-                            <a class="btn btn-primary" href="#" th:href="@{/callback_details/{id}(id=${callback.uid})}">View</a>
-                        </td>
-                        <td>
-                            <a class="btn btn-primary" href="#" th:href="@{/callback_details/{id}(id=${callback.uid})}">Edit</a>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div><br>
-        </details>
+                <div><br></div>
+                <div class="container align-content-center" style="text-align: center">
+                    <p style="font-weight:bold; font-size: x-large">Callbacks</p>
+                    <table class="table table-striped table-bordered border-dark">
+                        <thead style="text-align:center">
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Time</th>
+                            <th scope="col">Case</th>
+                            <th scope="col">Agent</th>
+                            <th scope="col">Call Type</th>
+                            <th scope="col">Notes</th>
+                            <th scope="col">Assigned</th>
+                            <th scope="col" colspan="2">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody style="text-align:center">
+                        <tr th:if="${#lists.isEmpty(callbacks)}">
+                            <td colspan="9" style="text-align: center">＼(ﾟｰﾟ＼) 🎉 No callbacks to display 🎉 ( ﾉ ﾟｰﾟ)ﾉ</td>
+                        </tr>
+                        <tr th:if="${#lists.size(callbacks) > 0}" th:each="callback : ${callbacks}">
+                            <td th:text="${callback.dateOfCallback}"/>
+                            <td th:text="${callback.time}"/>
+                            <td th:text="${callback.callbackCase}"/>
+                            <td th:text="${callback.agent}"/>
+                            <td th:text="${callback.callbackType}"/>
+                            <td th:text="${callback.notes}"/>
+                            <td th:text="${callback.assigned}"/>
+                            <td>
+                                <a href="#" th:href="@{/callback_details/{id}(id=${callback.uid})}">View</a>
+                            </td>
+                            <td>
+                                <a href="#" th:href="@{/callback_details/{id}(id=${callback.uid})}">Edit</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div><br>
+            </details>
+        </div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 </body>
 </html>
