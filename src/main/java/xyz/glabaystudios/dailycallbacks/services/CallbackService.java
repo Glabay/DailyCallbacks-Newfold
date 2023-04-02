@@ -102,7 +102,7 @@ public class CallbackService {
 		// start out with the list of callbacks that are not completed, that match the provided date
 		List<Callback> totalDailyCallbacks = callbackRepository.findByDateOfCallbackAndCompletedFalse(formattedDate);
 		// Next, grab the complete list of callbacks and loop over them to check them out
-		findAll().stream()
+		findAllOpenCallbacks().stream()
 				// We are only looking for callbacks with details
 				.filter(callback -> Objects.nonNull(callback.getDetails()) && !callback.getDetails().isEmpty())
 				// for each of the open callbacks with details, we want to add them to the daily total, as these may have been on going

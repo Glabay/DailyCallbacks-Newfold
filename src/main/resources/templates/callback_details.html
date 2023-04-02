@@ -3,6 +3,8 @@
 <head>
     <!--  Scripts to preload  -->
     <link href="/webjars/bootstrap/5.2.3/css/bootstrap.css" rel="stylesheet"/>
+    <link href="/css/style.css" rel="stylesheet">
+    <link href="/css/callbackDetails.css" rel="stylesheet">
     <script type="text/javascript" src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="/webjars/jquery/3.6.4/jquery.min.js"></script>
 
@@ -10,105 +12,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>WBC Tracker | Callback Details</title>
 </head>
-<style>
-    .first-button {
-        color: rgb(255, 255, 255);
-        border-radius: 5px;
-        border: none;
-        padding: 9px;
-        background: rgb(13, 110, 252);
-        transition: box-shadow .35s ease !important;
-        outline: none;
-     }
-
-    .first-button:active {
-        background-color: rgb(2, 42, 112);
-        color: #fff;
-        border: none;
-    }
-
-    .popup .content {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%,-150%) scale(0);
-        width: 350px;
-        height: 580px;
-        z-index: 2;
-        text-align: center;
-        padding: 10px;
-        border-radius: 5px;
-        background: #dfdfdf;
-        z-index: 1;
-    }
-
-    .popup.active .content {
-         transition: all 300ms ease-in-out;
-         transform: translate(-50%,-50%) scale(1);
-     }
-
-    .popup .close-btn {
-        position: absolute;
-        right: 15px;
-        top: 10px;
-        width: 30px;
-        height: 30px;
-        color: white;
-        font-size: 14px;
-        text-align: center;
-        border-radius: 50%;
-        padding: 4px 5px 7px 5px;
-        background: #237be6;
-
-    }
-
-    .input-field .validate {
-        padding: 20px;
-        font-size: 16px;
-        border-radius: 5px;
-        margin-bottom: 15px;
-        color: #000000;
-        background: #ffffff;
-        border: 2px solid rgb(214, 214, 214);
-        width: 270px;
-        outline: none;
-    }
-
-    .second-button {
-        color: white;
-        font-size: 18px;
-        font-weight: 500;
-        margin-top: 20px;
-        padding: 15px 40px;
-        border-radius: 5px;
-        border: none;
-        background: #05438f;
-        transition: box-shadow .35s ease !important;
-        outline: none;
-    }
-
-    .second-button:active{
-        background: linear-gradient(145deg,#222222, #292929);
-        border: none;
-        outline: none;
-    }
-</style>
-<body>
+<body class="body">
 <div th:replace="~{fragments/header::header}"></div>
 <div class="container">
-    <div class="card">
-        <div class="card-body">
-            <h3 class="card-title" th:text="${callback.callbackCase}">CallbackCase</h3>
-            <h5 class="card-subtitle" th:text="${callback.time}">CallbackTime</h5><br>
-            <h5>Owner:</h5>
-            <p th:text="${callback.agent}">CallbackOwner</p>
-            <h5>Case Notes:</h5>
-            <p th:text="${callback.notes}">CallbackNotes</p>
-            <h5>Actions:</h5>
-            <a class="first-button btn-primary" href="#" onclick="openWbdNoteEntry()">Add Note</a>
-            <a class="btn btn-primary" style="margin-bottom: 7px" href="#">Complete</a>
-        </div>
-    </div>
+    <!-- The Popup requesting notes -->
     <div class="popup" id="popup-1">
         <div class="content">
             <form action="#" th:action="@{/callback_details/addNote(id=${detailIndex})}" th:object="${newCallbackDetails}" method="post">
@@ -123,8 +30,27 @@
             </form>
         </div>
     </div>
+
+    <!-- The Head of the DetailsCard -->
+    <div class="card">
+        <div class="card-body">
+            <form action="#" th:action="@{/callback_details/complete(id=${callback.uid})}" method="post">
+                <h3 class="card-title" th:text="${callback.callbackCase}">CallbackCase</h3>
+                <h5 class="card-subtitle" th:text="${callback.time}">CallbackTime</h5><br>
+                <h5>Owner:</h5>
+                <p th:text="${callback.agent}">CallbackOwner</p>
+                <h5>Case Notes:</h5>
+                <p th:text="${callback.notes}">CallbackNotes</p>
+                <h5>Actions:</h5>
+                <a class="first-button btn-primary" href="#" onclick="openWbdNoteEntry()">Add Note</a>
+                <button type="submit" class="btn btn-primary" style="margin-bottom: 7px">Complete</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- The Table of notes -->
     <div class="container">
-        <table class="table">
+        <table class="table table-striped table-bordered border-dark">
             <thead>
                 <tr>
                     <th scope="col">Date</th>
@@ -136,11 +62,11 @@
             </thead>
             <tbody>
             <tr th:each="detail : ${callback.details}">
-                <td th:text="${detail.cbDate}">08/21/2022</td>
-                <td th:text="${detail.cbTime}">10:00 AM</td>
-                <td th:text="${detail.cbDay}">1</td>
-                <td th:text="${detail.cbAttempt}">1</td>
-                <td th:text="${detail.cbNote}">No answer, left VM, Email sent</td>
+                <td th:text="${detail.cbDate}"/>
+                <td th:text="${detail.cbTime}"/>
+                <td th:text="${detail.cbDay}"/>
+                <td th:text="${detail.cbAttempt}"/>
+                <td th:text="${detail.cbNote}"/>
             </tr>
             </tbody>
         </table>

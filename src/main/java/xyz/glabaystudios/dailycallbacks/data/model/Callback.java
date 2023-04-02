@@ -28,6 +28,10 @@ public class Callback {
 	private String notes;
 
 	private Boolean completed = Boolean.FALSE;
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private String dateCompleted;
+	private String completedBy;
+	private Long timeCompleted;
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "callbackParentId", cascade = CascadeType.MERGE)
 	private Collection<CallbackDetails> details = new ArrayList<>();

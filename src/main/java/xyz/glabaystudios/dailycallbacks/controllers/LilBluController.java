@@ -17,8 +17,19 @@ public class LilBluController {
     private final AgentService agentService;
 
     @GetMapping
-    public String getHome(Model model){
+    public String getHome(Model model) {
+        return "lilblu";
+    }
 
-        return "sidebar";
+    @GetMapping("/toolbox/whois")
+    public String getToolboxWhois(Model model) {
+        model.addAttribute("tool", "domain_lookup");
+        return "lilblu";
+    }
+
+    @GetMapping("/toolbox/exceptions")
+    public String getToolboxExceptions(Model model) {
+        model.addAttribute("tool", "exception_sending");
+        return "lilblu";
     }
 }

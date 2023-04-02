@@ -1,9 +1,6 @@
 package xyz.glabaystudios.dailycallbacks.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,8 +8,10 @@ import xyz.glabaystudios.dailycallbacks.data.model.Callback;
 import xyz.glabaystudios.dailycallbacks.data.model.CallbackDetails;
 import xyz.glabaystudios.dailycallbacks.services.CallbackService;
 
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,13 +43,32 @@ public class CallbackDetailsController {
 	@PostMapping(value="/addNote")
 	public String addSingleCallback(Model model, @ModelAttribute("newCallbackDetails") CallbackDetails newCallbackDetails, @RequestParam("id") Long callbackId) {
 		if (Objects.isNull(callbackId)) return "redirect:/error";
-		System.out.println("Submitted: " + newCallbackDetails);
 		List<CallbackDetails> details = new ArrayList<>();
 		if (!Objects.isNull(newCallbackDetails) && !missingData(newCallbackDetails)) {
 			newCallbackDetails.setCallbackParentId(callbackId);
 			details.add(newCallbackDetails);
 			callbackService.save(details);
 			return "redirect:/callback_details/" + newCallbackDetails.getCallbackParentId();
+		}
+		return "redirect:/error";
+	}
+
+	@PostMapping(value="/complete")
+	public String completeCallbackDetails(@RequestParam("id") Long callbackId) {
+		if (Objects.isNull(callbackId))
+			return "redirect:/error";
+		Callback callback = callbackService.findCallbackById(callbackId);
+		if (Objects.nonNull(callback)) {
+			Date todaysDate = Date.from(Instant.now());
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyy-MM-dd");
+			String todaysDateFormatted = dateFormat.format(todaysDate);
+
+			callback.setCompleted(true);
+			callback.setDateCompleted(todaysDateFormatted); // Today's date
+			callback.setCompletedBy("Developer"); // the logged-in user, who clicked the button
+			callback.setTimeCompleted(System.currentTimeMillis());
+			callbackService.save(callback);
+			return "redirect:/callbacks";
 		}
 		return "redirect:/error";
 	}

@@ -44,7 +44,6 @@ public class CallbacksController {
 			// TODO: Fetch all Callback Details, with
 			// TODO: Sort by time;
 			model.addAttribute("callbacks", callbacks); // The callbacks
-			model.addAttribute("module", "callbacks");
 		}
 
 		// a blank instance of the Object so the Thymeleaf template has something to model the input to when entering a new callback
