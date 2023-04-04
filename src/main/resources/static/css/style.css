@@ -18,6 +18,10 @@
     height: 100%;
     flex-direction: column;
 }
+.content {
+    width: 100vw;
+    transform: translate(0) scale(1);
+}
 
 .flex-filter-container > button {
     width: 33%;

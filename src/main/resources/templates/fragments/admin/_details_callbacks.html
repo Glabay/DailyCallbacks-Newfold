@@ -1,20 +1,16 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <!--  Scripts to preload  -->
     <link href="/webjars/bootstrap/5.2.3/css/bootstrap.css" rel="stylesheet"/>
     <link href="/css/style.css" rel="stylesheet">
     <link href="/css/sidebar.css" rel="stylesheet">
-    <link href="/css/lilBlu.css" rel="stylesheet">
     <script type="text/javascript" src="/webjars/jquery/3.6.4/jquery.min.js"></script>
     <script type="text/javascript" src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
 
-    <meta http-equiv="Content-Type" content="text/html"/>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>LilBlu</title>
 </head>
-<body class="body-lilblu">
+<body>
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
     <symbol id="bootstrap" viewBox="0 0 118 94">
         <title>Bootstrap</title>
@@ -73,26 +69,76 @@
         <path fill-rule="evenodd" d="M4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999zm2.493 8.574a.5.5 0 0 1-.411.575c-.712.118-1.28.295-1.655.493a1.319 1.319 0 0 0-.37.265.301.301 0 0 0-.057.09V14l.002.008a.147.147 0 0 0 .016.033.617.617 0 0 0 .145.15c.165.13.435.27.813.395.751.25 1.82.414 3.024.414s2.273-.163 3.024-.414c.378-.126.648-.265.813-.395a.619.619 0 0 0 .146-.15.148.148 0 0 0 .015-.033L12 14v-.004a.301.301 0 0 0-.057-.09 1.318 1.318 0 0 0-.37-.264c-.376-.198-.943-.375-1.655-.493a.5.5 0 1 1 .164-.986c.77.127 1.452.328 1.957.594C12.5 13 13 13.4 13 14c0 .426-.26.752-.544.977-.29.228-.68.413-1.116.558-.878.293-2.059.465-3.34.465-1.281 0-2.462-.172-3.34-.465-.436-.145-.826-.33-1.116-.558C3.26 14.752 3 14.426 3 14c0-.599.5-1 .961-1.243.505-.266 1.187-.467 1.957-.594a.5.5 0 0 1 .575.411z"/>
     </symbol>
 </svg>
-    <div th:replace="~{fragments/header::header}"></div>
-    <div class="wrapper">
-        <aside th:replace="~{fragments/sidebars/_lilblu_sidebar::sidebar}"></aside>
-
-        <div class="content">
-            <div th:if="${tool == 'domain_lookup'}">
-                <div th:replace="~{fragments/lilblu/_domain_lookup::domainLookup}"></div>
+    <div th:fragment="detailsCallbacks">
+        <p style="text-align:center; font-weight:bold; font-size: x-large">Filters</p>
+        <div class="flex-container border-dark">
+            <div>
+                <form class="flex-filter-container" action="#" th:action="@{/admin/filters/apply}" th:object="${adminCallbackFilter}" method="get">
+                    <label for="SpecificDay">Specific Day</label><br>
+                    <input id="SpecificDay" type="date" th:field="${adminCallbackFilter.specificDate}"><br><br>
+                    <button type="submit" class="btn btn-primary">Apply Filter</button>
+                </form>
             </div>
-            <div th:if="${tool == 'exception_sending'}">
-                <div th:replace="~{fragments/lilblu/_exception_submission::exceptionSending}"></div>
+            <div>
+                <form class="flex-filter-container" action="#" th:action="@{/admin/filters/apply}" th:object="${adminCallbackFilter}" method="get">
+                    <label for="filterStartDay">Callbacks From</label><br>
+                    <input id="filterStartDay" type="date" th:field="${adminCallbackFilter.filterStartDay}"><br>
+                    <label for="filterEndDay">Callbacks Up Until</label><br>
+                    <input id="filterEndDay" type="date" th:field="${adminCallbackFilter.filterEndDay}"><br><br>
+                    <button type="submit" class="btn btn-primary">Apply Filter</button>
+                </form>
             </div>
-            <div th:if="${tool == null}">
-                <div>
-                    <h1>Welcome to GlabayStudios - Little Blue Buddy (LilBlu)</h1>
-                    <img src="https://glabay.github.io/Little-Blue-Buddy-LilBlu/images/lilblu-large.png">
-                    <img src="https://glabay.github.io/Little-Blue-Buddy-LilBlu/images/newfold-asset-logo.png">
-                    <h4>Please select a tool from the left</h4>
-                </div>
+            <div>
+                <form class="flex-filter-container" action="#" th:action="@{/admin/filters/apply}" th:object="${adminCallbackFilter}" method="get">
+                    <br>
+                    <input type="text" placeholder="Search by Agent" th:field="${adminCallbackFilter.filterByAgent}"><br>
+                    Search by Status<br>
+                    <input id="completedCases" type="radio" name="Status" value="complete" th:field="${adminCallbackFilter.filterByStatus}">
+                    <label for="completedCases">Complete</label><br>
+                    <input id="uncompletedCases" type="radio" name="Status" value="incomplete" th:field="${adminCallbackFilter.filterByStatus}">
+                    <label for="uncompletedCases">Incomplete</label><br><br>
+                    <button type="submit" class="btn btn-primary">Apply Filter</button>
+                </form>
             </div>
         </div>
+        <div><br></div>
+        <div class="container align-content-center" style="text-align: center">
+            <p style="font-weight:bold; font-size: x-large">Callbacks</p>
+            <table class="table table-striped table-bordered border-dark" style="padding: 2px">
+                <thead style="text-align:center">
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Case</th>
+                    <th scope="col">Agent</th>
+                    <th scope="col">Call Type</th>
+                    <th scope="col">Notes</th>
+                    <th scope="col">Assigned</th>
+                    <th scope="col" colspan="2">Actions</th>
+                </tr>
+                </thead>
+                <tbody style="text-align:center">
+                <tr th:if="${#lists.isEmpty(callbacks)}">
+                    <td colspan="9" style="text-align: center">＼(ﾟｰﾟ＼) 🎉 No callbacks to display 🎉 ( ﾉ ﾟｰﾟ)ﾉ</td>
+                </tr>
+                <tr th:if="${#lists.size(callbacks) > 0}" th:each="callback : ${callbacks}">
+                    <td th:text="${callback.dateOfCallback}"/>
+                    <td th:text="${callback.time}"/>
+                    <td th:text="${callback.callbackCase}"/>
+                    <td th:text="${callback.agent}"/>
+                    <td th:text="${callback.callbackType}"/>
+                    <td th:text="${callback.notes}"/>
+                    <td th:text="${callback.assigned}"/>
+                    <td>
+                        <a href="#" th:href="@{/callback_details/{id}(id=${callback.uid})}">View</a>
+                    </td>
+                    <td>
+                        <a href="#" th:href="@{/callback_details/{id}(id=${callback.uid})}">Edit</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div><br>
     </div>
 </body>
 </html>

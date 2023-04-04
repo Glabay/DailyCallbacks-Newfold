@@ -5,7 +5,6 @@
     <link href="/webjars/bootstrap/5.2.3/css/bootstrap.css" rel="stylesheet"/>
     <link href="/css/style.css" rel="stylesheet">
     <link href="/css/sidebar.css" rel="stylesheet">
-    <link href="/css/lilBlu.css" rel="stylesheet">
     <script type="text/javascript" src="/webjars/jquery/3.6.4/jquery.min.js"></script>
     <script type="text/javascript" src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
 
@@ -14,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>LilBlu</title>
 </head>
-<body class="body-lilblu">
+<body>
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
     <symbol id="bootstrap" viewBox="0 0 118 94">
         <title>Bootstrap</title>
@@ -73,26 +72,35 @@
         <path fill-rule="evenodd" d="M4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999zm2.493 8.574a.5.5 0 0 1-.411.575c-.712.118-1.28.295-1.655.493a1.319 1.319 0 0 0-.37.265.301.301 0 0 0-.057.09V14l.002.008a.147.147 0 0 0 .016.033.617.617 0 0 0 .145.15c.165.13.435.27.813.395.751.25 1.82.414 3.024.414s2.273-.163 3.024-.414c.378-.126.648-.265.813-.395a.619.619 0 0 0 .146-.15.148.148 0 0 0 .015-.033L12 14v-.004a.301.301 0 0 0-.057-.09 1.318 1.318 0 0 0-.37-.264c-.376-.198-.943-.375-1.655-.493a.5.5 0 1 1 .164-.986c.77.127 1.452.328 1.957.594C12.5 13 13 13.4 13 14c0 .426-.26.752-.544.977-.29.228-.68.413-1.116.558-.878.293-2.059.465-3.34.465-1.281 0-2.462-.172-3.34-.465-.436-.145-.826-.33-1.116-.558C3.26 14.752 3 14.426 3 14c0-.599.5-1 .961-1.243.505-.266 1.187-.467 1.957-.594a.5.5 0 0 1 .575.411z"/>
     </symbol>
 </svg>
-    <div th:replace="~{fragments/header::header}"></div>
-    <div class="wrapper">
-        <aside th:replace="~{fragments/sidebars/_lilblu_sidebar::sidebar}"></aside>
-
-        <div class="content">
-            <div th:if="${tool == 'domain_lookup'}">
-                <div th:replace="~{fragments/lilblu/_domain_lookup::domainLookup}"></div>
-            </div>
-            <div th:if="${tool == 'exception_sending'}">
-                <div th:replace="~{fragments/lilblu/_exception_submission::exceptionSending}"></div>
-            </div>
-            <div th:if="${tool == null}">
-                <div>
-                    <h1>Welcome to GlabayStudios - Little Blue Buddy (LilBlu)</h1>
-                    <img src="https://glabay.github.io/Little-Blue-Buddy-LilBlu/images/lilblu-large.png">
-                    <img src="https://glabay.github.io/Little-Blue-Buddy-LilBlu/images/newfold-asset-logo.png">
-                    <h4>Please select a tool from the left</h4>
-                </div>
-            </div>
+    <aside th:fragment="sidebar">
+        <div class="d-flex flex-column p-3 text-white bg-dark">
+            <hr style="margin-top: -16px">
+            <a href="#" th:href="@{/admin}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none" style="height: 32px">
+                <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+                <span class="fs-5">Admin Dashboard</span>
+            </a>
+            <hr>
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item">
+                    <a href="#" th:href="@{/admin/details/agents}">
+                        <svg class="bi me-2" width="16" height="16"><use xlink:href="#people-circle"></use></svg>
+                        Agent Details
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" th:href="@{/admin/details/stats}">
+                        <svg class="bi me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
+                        Callback Stats
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" th:href="@{/admin/details/callbacks}">
+                        <svg class="bi me-2" width="16" height="16"><use xlink:href="#chat-quote-fill"></use></svg>
+                        Daily Callbacks
+                    </a>
+                </li>
+            </ul>
         </div>
-    </div>
+    </aside>
 </body>
 </html>

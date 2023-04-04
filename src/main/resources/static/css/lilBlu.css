@@ -1,0 +1,28 @@
+.flex-container-lilblu {
+    display: flex;
+    height: 256px;
+    justify-content: space-around;
+    background-color: #F4AE86;
+    flex-direction: row;
+}
+
+.flex-container-lilblu > div {
+    background-color: #EF7832;
+    text-align:center;
+    width: 33%;
+    height: 100%;
+    margin: auto;
+}
+
+.flex-lb-container {
+    height: 100%;
+    flex-direction: column;
+}
+
+.table > :not(caption) > * > * {
+    padding: 2px
+}
+
+.body-lilblu {
+    background-color: #F4AE86;
+}

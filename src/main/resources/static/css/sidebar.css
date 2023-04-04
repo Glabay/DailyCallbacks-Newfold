@@ -7,8 +7,10 @@
 
 aside {
     height: 100%;
-    width: 218px;
+    width: 256px;
     float: left;
+    position: sticky;
+    top: 0;
 }
 
 .nav-item {
@@ -29,5 +31,5 @@ aside {
 
 .d-flex {
     display: flex !important;
-    height: 90vh;
+    height: 100vh;
 }

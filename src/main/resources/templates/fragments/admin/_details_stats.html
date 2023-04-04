@@ -1,20 +1,16 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <!--  Scripts to preload  -->
     <link href="/webjars/bootstrap/5.2.3/css/bootstrap.css" rel="stylesheet"/>
     <link href="/css/style.css" rel="stylesheet">
     <link href="/css/sidebar.css" rel="stylesheet">
-    <link href="/css/lilBlu.css" rel="stylesheet">
     <script type="text/javascript" src="/webjars/jquery/3.6.4/jquery.min.js"></script>
     <script type="text/javascript" src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
 
-    <meta http-equiv="Content-Type" content="text/html"/>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>LilBlu</title>
 </head>
-<body class="body-lilblu">
+<body>
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
     <symbol id="bootstrap" viewBox="0 0 118 94">
         <title>Bootstrap</title>
@@ -73,26 +69,46 @@
         <path fill-rule="evenodd" d="M4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999zm2.493 8.574a.5.5 0 0 1-.411.575c-.712.118-1.28.295-1.655.493a1.319 1.319 0 0 0-.37.265.301.301 0 0 0-.057.09V14l.002.008a.147.147 0 0 0 .016.033.617.617 0 0 0 .145.15c.165.13.435.27.813.395.751.25 1.82.414 3.024.414s2.273-.163 3.024-.414c.378-.126.648-.265.813-.395a.619.619 0 0 0 .146-.15.148.148 0 0 0 .015-.033L12 14v-.004a.301.301 0 0 0-.057-.09 1.318 1.318 0 0 0-.37-.264c-.376-.198-.943-.375-1.655-.493a.5.5 0 1 1 .164-.986c.77.127 1.452.328 1.957.594C12.5 13 13 13.4 13 14c0 .426-.26.752-.544.977-.29.228-.68.413-1.116.558-.878.293-2.059.465-3.34.465-1.281 0-2.462-.172-3.34-.465-.436-.145-.826-.33-1.116-.558C3.26 14.752 3 14.426 3 14c0-.599.5-1 .961-1.243.505-.266 1.187-.467 1.957-.594a.5.5 0 0 1 .575.411z"/>
     </symbol>
 </svg>
-    <div th:replace="~{fragments/header::header}"></div>
-    <div class="wrapper">
-        <aside th:replace="~{fragments/sidebars/_lilblu_sidebar::sidebar}"></aside>
-
-        <div class="content">
-            <div th:if="${tool == 'domain_lookup'}">
-                <div th:replace="~{fragments/lilblu/_domain_lookup::domainLookup}"></div>
-            </div>
-            <div th:if="${tool == 'exception_sending'}">
-                <div th:replace="~{fragments/lilblu/_exception_submission::exceptionSending}"></div>
-            </div>
-            <div th:if="${tool == null}">
-                <div>
-                    <h1>Welcome to GlabayStudios - Little Blue Buddy (LilBlu)</h1>
-                    <img src="https://glabay.github.io/Little-Blue-Buddy-LilBlu/images/lilblu-large.png">
-                    <img src="https://glabay.github.io/Little-Blue-Buddy-LilBlu/images/newfold-asset-logo.png">
-                    <h4>Please select a tool from the left</h4>
-                </div>
-            </div>
-        </div>
+    <div th:fragment="detailsStats">
+        <div class="container align-content-center" style="text-align: center">
+            <p style="font-weight:bold; font-size: x-large">Year To Date Stats</p>
+            <table class="table table-striped table-bordered border-dark">
+                <thead>
+                <tr>
+                    <th scope="col">Callback Type</th>
+                    <th scope="col">Jan</th>
+                    <th scope="col">Feb</th>
+                    <th scope="col">Mar</th>
+                    <th scope="col">Apr</th>
+                    <th scope="col">May</th>
+                    <th scope="col">Jun</th>
+                    <th scope="col">Jul</th>
+                    <th scope="col">Aug</th>
+                    <th scope="col">Sep</th>
+                    <th scope="col">Oct</th>
+                    <th scope="col">Nov</th>
+                    <th scope="col">Dec</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.size(ytdStats.getCallTypeList()) > 0}" th:each="callbackType : ${ytdStats.getCallTypeList()}">
+                    <td th:text="${callbackType.key}"/>
+                    <td th:text="${callbackType.value.getMonthData('Jan')}"/>
+                    <td th:text="${callbackType.value.getMonthData('Feb')}"/>
+                    <td th:text="${callbackType.value.getMonthData('Mar')}"/>
+                    <td th:text="${callbackType.value.getMonthData('Apr')}"/>
+                    <td th:text="${callbackType.value.getMonthData('May')}"/>
+                    <td th:text="${callbackType.value.getMonthData('Jun')}"/>
+                    <td th:text="${callbackType.value.getMonthData('Jul')}"/>
+                    <td th:text="${callbackType.value.getMonthData('Aug')}"/>
+                    <td th:text="${callbackType.value.getMonthData('Sep')}"/>
+                    <td th:text="${callbackType.value.getMonthData('Oct')}"/>
+                    <td th:text="${callbackType.value.getMonthData('Nov')}"/>
+                    <td th:text="${callbackType.value.getMonthData('Dec')}"/>
+                </tr>
+                </tbody>
+            </table>
+        </div><br>
     </div>
 </body>
 </html>

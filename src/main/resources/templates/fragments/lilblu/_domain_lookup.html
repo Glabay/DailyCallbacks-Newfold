@@ -5,31 +5,139 @@
     <link href="/webjars/bootstrap/5.2.3/css/bootstrap.css" rel="stylesheet"/>
     <link href="/css/style.css" rel="stylesheet">
     <link href="/css/sidebar.css" rel="stylesheet">
+    <link href="/css/lilBlu.css" rel="stylesheet">
     <script type="text/javascript" src="/webjars/jquery/3.6.4/jquery.min.js"></script>
     <script type="text/javascript" src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
 
-    <title>LilBlu</title>
+    <title>LilBlu | Domain Search</title>
 </head>
 <body>
     <div th:fragment="domainLookup">
-        <p>Here you will be able to lookup a WhoIs search, as well as a Social Presence Check, which will crawl the existing site and present a list of Social media presences</p>
-        <br>
-        <p>The Social presence we're looking for, but not limited to:</p>
-            <ul>
-                <li> Facebook </li>
-                <li> YouTube </li>
-                <li> Instagram </li>
-                <li> Twitter </li>
-                <li> LinkedIn </li>
-                <li> Pinterest </li>
-                <li> TikTok </li>
-                <li> Reddit </li>
-                <li> spotify </li>
-                <li> soundcloud </li>
-                <li> itunes.apple </li>
-                <li> snapchat </li>
-                <li> bandcamp.com </li>
-            </ul>
+        <!--  WhoIs Lookup Buddy  -->
+        <div class="container align-content-center"><br>
+            <p class="text-center" style="text-align:center; font-weight:bold; font-size: x-large">Domain to Search</p>
+            <form action="#" th:action="@{/lilblu/toolbox/whois/search}" method="get">
+                <label style="display: flex;justify-content: center">
+                    <input type="text" name="domain" placeholder="Domain Here" style="width:250px; text-align:center">
+                    <br>
+                    <button type="submit" class="btn btn-primary">Search Domain</button>
+                </label>
+                <br>
+            </form>
+        </div>
+        <!-- WhoIs Information -->
+        <div th:if="${whoisResult != null}" class="flex-container-lilblu">
+            <!-- Registrar Information -->
+            <div id="familyInfo" class="flex-lb-container">
+                <div>
+                    <p>
+                        <span th:text="${whoisResult.domainName.toLowerCase()}"/>
+                        <span th:if="${whoisResult.sslSecure == true}">✅</span>
+                        <span th:if="${whoisResult.sslSecure == false}">⛔</span> is
+                        <span th:if="${whoisResult.inFamily == true}">In-Family</span>
+                        <span th:if="${whoisResult.inFamily == false}">Out-Of-Family</span>
+                        <span th:if="${whoisResult.newlyRegistered == true}">and New</span>
+                    </p>
+                    <div th:if="${whoisResult != null}">
+                        <table class="table table-striped table-bordered border-dark">
+                            <thead style="text-align:center">
+                            <tr>
+                                <th scope="col">Data</th>
+                                <th scope="col">Registrar Info</th>
+                            </tr>
+                            </thead>
+                            <tbody style="text-align:center">
+                            <tr>
+                                <td>Registered With</td>
+                                <td th:text="${whoisResult.registrar}"></td>
+                            </tr>
+                            <tr>
+                                <td>Registered On</td>
+                                <td th:text="${whoisResult.createdDate}"></td>
+                            </tr>
+                            <tr>
+                                <td>Last Updated</td>
+                                <td th:text="${whoisResult.updatedDate}"></td>
+                            </tr>
+                            <tr>
+                                <td>Expires On</td>
+                                <td th:text="${whoisResult.registryExpiryDate}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- Mail Server Information -->
+            <div class="flex-lb-container">
+                <div>
+                    <p>They have <span th:text="${whoisResult.mailServerCount}"/> Mail Servers</p>
+                    <div th:if="${whoisResult.mailServers != null}">
+                        <table class="table table-striped table-bordered border-dark">
+                            <thead style="text-align:center">
+                            <tr>
+                                <th scope="col">Mail Servers</th>
+                            </tr>
+                            </thead>
+                            <tbody style="text-align:center">
+                            <tr th:if="${#lists.size(whoisResult.mailServers) > 0}" th:each="mailServer : ${whoisResult.mailServers}">
+                                <td th:text="${mailServer}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- Name Server Information -->
+            <div class="flex-lb-container">
+                <div>
+                    <p>They have <span th:text="${whoisResult.nameServers.size()}"/> Name Servers</p>
+                    <div th:if="${whoisResult.nameServers != null}">
+                        <table class="table table-striped table-bordered border-dark">
+                            <thead style="text-align:center">
+                            <tr>
+                                <th scope="col">Name Servers</th>
+                            </tr>
+                            </thead>
+                            <tbody style="text-align:center">
+                            <tr th:if="${#lists.size(whoisResult.nameServers) > 0}" th:each="nameServer : ${whoisResult.nameServers}">
+                                <td th:text="${nameServer}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--  List all Social Medias  -->
+        <div class="container align-content-center"><br>
+            <div th:if="${whoisResult != null}">
+                <p class="text-center" style="text-align:center; font-weight:bold; font-size: x-large">Social Presence</p>
+                <table class="table table-striped table-bordered border-dark">
+                    <thead style="text-align:center">
+                    <tr>
+                        <th scope="col">Platform</th>
+                        <th scope="col">Social Handler</th>
+                        <th scope="col">Social Platform Link</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody th:if="${whoisResult.socialLinkMap != null}" style="text-align:center">
+                    <tr th:if="${#lists.isEmpty(whoisResult.socialLinkMap.keySet())}">
+                        <td colspan="4">No Social Presence found</td>
+                    </tr>
+                    <tr th:if="${#lists.size(whoisResult.socialLinkMap.keySet()) > 0}" th:each="result : ${whoisResult.socialLinkMap.keySet()}">
+                        <td th:text="${result}"></td>
+                        <td th:text="${whoisResult.getSocialLinkMap().get(result).socialDisplayName}"></td>
+                        <td th:text="${whoisResult.getSocialLinkMap().get(result).socialPlatformURL}"></td>
+                        <td>
+                            <a href="#" th:href="${whoisResult.getSocialLinkMap().get(result).socialPlatformURL}" target="_blank" rel="noopener">Verify</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div><br>
     </div>
 </body>
 </html>
