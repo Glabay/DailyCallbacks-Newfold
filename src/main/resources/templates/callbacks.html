@@ -103,16 +103,16 @@
                 <td th:text="${callback.assigned}"/>
 
                 <!--If-Else statement-->
-                <td th:if="${cbDataObject.getAgent() == callback.getAgent()}">
+                <td th:if="${cbDataObject.getAgent() == callback.getAssigned()}">
                     <a href="#" th:href="@{/callback_details/{id}(id=${callback.uid})}">Action</a>
                 </td>
-                <td th:unless="${cbDataObject.getAgent() == callback.getAgent()}">
+                <td th:unless="${cbDataObject.getAgent() == callback.getAssigned()}">
                     N/A
                 </td>
-                <td th:unless="${cbDataObject.getAgent() == callback.getAgent()}">
-                    <a href="#" th:href="@{/callback/claim/{id}(id=${callback.uid})}">Claim</a>
+                <td th:unless="${cbDataObject.getAgent() == callback.getAssigned()}">
+                    <a href="#" th:href="@{/callbacks/claim/{id}/{agentName}(id=${callback.uid}, agentName=${cbDataObject.getAgent()})}">Claim</a>
                 </td>
-                <td th:if="${cbDataObject.getAgent() == callback.getAgent()}">
+                <td th:if="${cbDataObject.getAgent() == callback.getAssigned()}">
                     N/A
                 </td>
             </tr>

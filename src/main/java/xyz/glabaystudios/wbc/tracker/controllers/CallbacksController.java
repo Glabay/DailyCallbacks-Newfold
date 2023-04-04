@@ -71,6 +71,19 @@ public class CallbacksController {
 		return "redirect:/error";
 	}
 
+	@GetMapping(path="/claim/{id}/{agentName}")
+	public String claimCallback(@PathVariable("id") Long callbackId, @PathVariable("agentName") String agentClaiming) {
+		Callback parentCallback = callbackService.findCallbackById(callbackId);
+		if (Objects.nonNull(parentCallback)) {
+			// replace the Ownership of this case, and redirect back to the callbacks page
+			parentCallback.setAssigned(agentClaiming);
+			parentCallback.setVolunteered(agentClaiming);
+			callbackService.save(parentCallback);
+			return "redirect:/callbacks";
+		}
+		return "redirect:/error";
+	}
+
 	@PostMapping(value="/new")
 	public String addSingleCallback(@ModelAttribute("callback") Callback callback) {
 		if (!Objects.isNull(callback)) {

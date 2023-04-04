@@ -33,6 +33,9 @@ public class Callback {
 	private String completedBy;
 	private Long timeCompleted;
 
+	private String volunteered;
+	private Boolean voluntold = Boolean.FALSE;
+
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "callbackParentId", cascade = CascadeType.MERGE)
 	private Collection<CallbackDetails> details = new ArrayList<>();
 
