@@ -38,7 +38,7 @@ public class CallbacksController {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyy-MM-dd");
 		String todaysDateFormatted = dateFormat.format(todaysDate);
 		// fetch the callback list for today
-		List<Callback> callbacks = callbackService.findOpenCallbacksForProvidedDate(todaysDateFormatted);
+		List<Callback> callbacks = callbackService.findAllOpenCallbacks(); //findOpenCallbacksForProvidedDate(todaysDateFormatted);
 		// quick check if we're not null and not empty
 		if (!Objects.isNull(callbacks) && !callbacks.isEmpty()) {
 			// TODO: Fetch all Callback Details, with
