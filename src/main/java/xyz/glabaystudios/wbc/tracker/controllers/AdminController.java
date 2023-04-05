@@ -77,13 +77,31 @@ public class AdminController {
 		return "admin_cp";
 	}
 
+	@GetMapping(path="/details/callbacks/edit/{id}")
+	public String getCallback(Model model, @PathVariable("id") Long callbackId) {
+		List<CallbackType> types = Arrays.stream(CallbackType.values()).toList();
+		// add in the available callback types
+		model.addAttribute("callbackTypes", types);
+		// fetch a list of agents
+		List<Agent> agents = agentService.findAll();
+		// check their not null, or empty; before adding them to the model
+		if (Objects.nonNull(agents) && !agents.isEmpty())
+			model.addAttribute("agents", agents);
 
+		Callback parentCallback = callbackService.findCallbackById(callbackId);
+		if (Objects.nonNull(parentCallback)) {
+			model.addAttribute("cbDataObject", parentCallback);
+			model.addAttribute("adminView", "details_callbacks_edit");
+			return "admin_cp";
+		}
+		return "redirect:/error";
+	}
 
 	@PostMapping(value="/add/singleton")
-	public String addSingleCallback(Model model, @ModelAttribute("callback") Callback callback) {
-		if (!Objects.isNull(callback) && !missingData(callback)) {
+	public String addSingleCallback(Model model, @ModelAttribute("cbDataObject") Callback callback) {
+		if (Objects.nonNull(callback)) {
 			callbackService.save(callback);
-			return "redirect:/admin";
+			return "redirect:/admin/details/callbacks";
 		}
 		return "redirect:/error";
 	}
@@ -97,7 +115,7 @@ public class AdminController {
 			agent.setAgentEmail(newAgent.getAgentEmail());
 			agent.setAgentUsername(newAgent.getAgentUsername());
 			agentService.save(agent);
-			return "redirect:/admin";
+			return "redirect:/admin/details/agents";
 		}
 		return "redirect:/error";
 	}

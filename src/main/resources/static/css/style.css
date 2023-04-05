@@ -52,6 +52,6 @@ summary::-webkit-details-marker {
     display: none;
 }
 
-.table > :not(caption) > * > * {
+.table>:not(caption)>*>* {
     padding: 2px
 }

@@ -1,19 +1,17 @@
 <!DOCTYPE html>
-<html   lang="en"
-        xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <!--  Scripts to preload  -->
-    <link href="/webjars/bootstrap/5.2.3/css/bootstrap.css" rel="stylesheet"/>
     <link href="/css/style.css" rel="stylesheet">
     <link href="/css/sidebar.css" rel="stylesheet">
+    <link href="/webjars/bootstrap/5.2.3/css/bootstrap.css" rel="stylesheet"/>
+    <script type="text/javascript" src="/js/main.js"></script>
     <script type="text/javascript" src="/webjars/jquery/3.6.4/jquery.min.js"></script>
     <script type="text/javascript" src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
 
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>WBC Tracker | Admin Control Panel</title>
+    <title>LilBlu</title>
 </head>
-<body class="body">
+<body>
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
     <symbol id="bootstrap" viewBox="0 0 118 94">
         <title>Bootstrap</title>
@@ -73,36 +71,81 @@
     </symbol>
 </svg>
 
-    <div th:replace="~{fragments/header::header}"></div>
-    <div class="wrapper">
-        <aside th:replace="~{fragments/sidebars/_admin_sidebar::sidebar}"></aside>
-
-        <div class="content">
-            <div class="px-4 text-center mx-auto">
-                <p class="display-6 fw-bold text-lg-center">🦸‍♀️ Welcome to the Admin Control Panel</p><br>
-            </div>
-            <!-- The Views -->
-            <div th:if="${adminView == 'details_agents'}">
-                <div th:replace="~{fragments/admin/_details_agents::detailsAgents}"></div>
-            </div>
-            <div th:if="${adminView == 'details_stats'}">
-                <div th:replace="~{fragments/admin/_details_stats::detailsStats}"></div>
-            </div>
-            <div th:if="${adminView == 'details_callbacks'}">
-                <div th:replace="~{fragments/admin/_details_callbacks::detailsCallbacks}"></div>
-            </div>
-            <div th:if="${adminView == 'details_callbacks_edit'}">
-                <div th:replace="~{fragments/admin/_details_callbacks_edit::detailsCallbacksEdit}"></div>
-            </div>
-            <div th:if="${adminView == null}">
-                <div>
-                    <p>
-                        Please select a tool from the left
-                    </p>
-                </div>
-            </div>
+    <div th:fragment="detailsCallbacksEdit" style="width:90%">
+        <div class="container align-content-center"><br>
+            <p class="text-center" style="text-align:center; font-weight:bold; font-size: x-large">Edit Existing Callback Entry</p>
+            <form action="#" th:action="@{/admin/add/singleton}" th:object="${cbDataObject}" method="post">
+                <table class="table table-striped table-bordered  border-dark">
+                    <thead style="text-align:center">
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Time</th>
+                        <th scope="col">Case</th>
+                        <th scope="col">Callback Owner</th>
+                        <th scope="col">Assigned Agent</th>
+                        <th scope="col">Call Type</th>
+                        <th scope="col">Notes</th>
+                    </tr>
+                    </thead>
+                    <tbody style="text-align:center">
+                    <tr>
+                        <td>
+                            <label>
+                                <input type="text" th:field="${cbDataObject.uid}" size="2">
+                            </label>
+                        </td>
+                        <td>
+                            <label>
+                                <input type="date" th:field="${cbDataObject.dateOfCallback}" size="8">
+                            </label>
+                        </td>
+                        <td>
+                            <label>
+                                <input type="text" th:field="*{time}" size="6">
+                            </label>
+                        </td>
+                        <td>
+                            <label>
+                                <input type="text" th:field="*{callbackCase}" size="5">
+                            </label>
+                        </td>
+                        <td>
+                            <label>
+                                <select th:field="${cbDataObject.agent}">
+                                    <option value="0">Select Agent</option>
+                                    <option th:each="agent : ${agents}" th:value="${agent.getAgentUsername()}" th:text="${agent.getAgentName()}"></option>
+                                </select>
+                            </label>
+                        </td>
+                        <td>
+                            <label>
+                                <select th:field="${cbDataObject.assigned}">
+                                    <option value="0">Select Agent</option>
+                                    <option th:each="agent : ${agents}" th:value="${agent.getAgentUsername()}" th:text="${agent.getAgentName()}"></option>
+                                </select>
+                            </label>
+                        </td>
+                        <td>
+                            <label>
+                                <select th:field="*{callbackType}">
+                                    <option value="0">Select Callback Type</option>
+                                    <option th:each="newCallbackType : ${callbackTypes}" th:value="${newCallbackType}" th:text="${newCallbackType.getCallbackTypeName()}"></option>
+                                </select>
+                            </label>
+                        </td>
+                        <td>
+                            <label>
+                                <input type="text" th:field="*{notes}">
+                            </label> <br>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <button type="submit" class="btn btn-primary" style="margin-left: 45%">Update Callback</button>
+                <br><br>
+            </form><br>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 </body>
 </html>
