@@ -29,7 +29,7 @@ aside {
     border-radius: 0;
 }
 
-.d-flex {
+.side-flex {
     display: flex !important;
     height: 100vh;
 }
