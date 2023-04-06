@@ -10,6 +10,7 @@ import xyz.glabaystudios.wbc.tracker.data.repo.AgentRepository;
 
 import java.util.Optional;
 
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
@@ -18,6 +19,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Agent> agent = agentRepository.findByAgentUsernameIgnoreCase(username);
-        return agent.map(CustomUserDetails::new).orElse(null);
+        if (agent.isPresent())
+            return new CustomUserDetails(agent.get());
+
+        else throw new UsernameNotFoundException("Username was not found");
     }
 }

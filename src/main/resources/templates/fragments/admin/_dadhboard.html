@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html   lang="en"
-        xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <!--  Scripts to preload  -->
     <link href="/webjars/bootstrap/5.2.3/css/bootstrap.css" rel="stylesheet"/>
@@ -9,11 +8,9 @@
     <script type="text/javascript" src="/webjars/jquery/3.6.4/jquery.min.js"></script>
     <script type="text/javascript" src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
 
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>WBC Tracker | Admin Control Panel</title>
+    <title>LilBlu</title>
 </head>
-<body class="body">
+<body>
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
     <symbol id="bootstrap" viewBox="0 0 118 94">
         <title>Bootstrap</title>
@@ -72,33 +69,13 @@
         <path fill-rule="evenodd" d="M4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999zm2.493 8.574a.5.5 0 0 1-.411.575c-.712.118-1.28.295-1.655.493a1.319 1.319 0 0 0-.37.265.301.301 0 0 0-.057.09V14l.002.008a.147.147 0 0 0 .016.033.617.617 0 0 0 .145.15c.165.13.435.27.813.395.751.25 1.82.414 3.024.414s2.273-.163 3.024-.414c.378-.126.648-.265.813-.395a.619.619 0 0 0 .146-.15.148.148 0 0 0 .015-.033L12 14v-.004a.301.301 0 0 0-.057-.09 1.318 1.318 0 0 0-.37-.264c-.376-.198-.943-.375-1.655-.493a.5.5 0 1 1 .164-.986c.77.127 1.452.328 1.957.594C12.5 13 13 13.4 13 14c0 .426-.26.752-.544.977-.29.228-.68.413-1.116.558-.878.293-2.059.465-3.34.465-1.281 0-2.462-.172-3.34-.465-.436-.145-.826-.33-1.116-.558C3.26 14.752 3 14.426 3 14c0-.599.5-1 .961-1.243.505-.266 1.187-.467 1.957-.594a.5.5 0 0 1 .575.411z"/>
     </symbol>
 </svg>
-
-    <div th:replace="~{fragments/header::header}"></div>
-    <div class="wrapper">
-        <aside th:replace="~{fragments/sidebars/_admin_sidebar::sidebar}"></aside>
-
-        <div class="content">
-            <div class="px-4 text-center mx-auto">
-                <p class="display-6 fw-bold text-lg-center">🦸‍♀️ Welcome to the Admin Control Panel 🦸‍♂️</p><br>
-            </div>
-            <!-- The Views -->
-            <div th:if="${adminView == 'details_agents'}">
-                <div th:replace="~{fragments/admin/_details_agents::detailsAgents}"></div>
-            </div>
-            <div th:if="${adminView == 'details_stats'}">
-                <div th:replace="~{fragments/admin/_details_stats::detailsStats}"></div>
-            </div>
-            <div th:if="${adminView == 'details_callbacks'}">
-                <div th:replace="~{fragments/admin/_details_callbacks::detailsCallbacks}"></div>
-            </div>
-            <div th:if="${adminView == 'details_callbacks_edit'}">
-                <div th:replace="~{fragments/admin/_details_callbacks_edit::detailsCallbacksEdit}"></div>
-            </div>
-            <div th:if="${adminView == null}">
-                <div th:replace="~{fragments/admin/_dadhboard::adminDashboard}"></div>
-            </div>
-        </div>
+    <div th:fragment="adminDashboard">
+        <div class="container align-content-center" style="text-align: center">
+            <p class="lead mb-4 py-2">
+                There are currently <a th:text="${totalAgents}">##</a> agents in the database.<br><br>
+                There are currently <a th:text="${totalCallbacks}">##</a> callbacks in the database.
+            </p>
+        </div><br>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 </body>
 </html>

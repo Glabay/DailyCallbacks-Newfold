@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security6"
-      lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
 <!--  Scripts to preload  -->
     <link href="/webjars/bootstrap/5.2.3/css/bootstrap.css" rel="stylesheet"/>
@@ -17,14 +15,13 @@
 <body class="body">
     <div th:replace="~{fragments/header::header}"></div>
     <div class="px-4 text-center">
-        <h1 class="display-5 fw-bold">Glabay Studios | WBC Tracker</h1>
+        <h1 class="display-5 fw-bold"> <span th:text="${loggedInAgent.getAgentName()}">Unknown-Agent</span> | WBC Tracker</h1>
         <div class="col-lg-6 mx-auto">
-
+            <p>
+                This Landing page will be unique to the agent logged in, with their total open Callbacks, and plans for future content/daily reminders
+            </p>
             <p class="lead mb-4 py-2">
                 🖥 Welcome to the WBC Tracking System 💻<br><br>
-                There are currently <a th:text="${totalAgents}">##</a> agents in the database.<br><br>
-                There are currently <a th:text="${totalCallbacks}">##</a> callbacks in the database.
-
             </p>
         </div>
     </div>

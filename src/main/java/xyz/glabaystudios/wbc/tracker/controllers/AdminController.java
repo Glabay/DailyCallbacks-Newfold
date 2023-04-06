@@ -28,12 +28,18 @@ public class AdminController {
 	private final AdminService adminService;
 
 	@GetMapping("")
-	public String getAdminLandingPage(HttpServletRequest request) {
+	public String getAdminLandingPage(HttpServletRequest request, Model model) {
 		Logger.getLogger().printStringMessageFormatted("Remote connection from user: %s (%s)", request.getRemoteUser(), request.getRemoteAddr());
 		// Check if we have a logged-in user
 		if (Objects.isNull(request.getRemoteUser()))
 			return "redirect:/login";
 		// Another Check if this user exists and if they have the right accesses
+
+		int totalOpenCallbacks = callbackService.findAllOpenCallbacks().size();
+		int totalAgents = agentService.findAll().size();
+
+		model.addAttribute("totalCallbacks", totalOpenCallbacks);
+		model.addAttribute("totalAgents", totalAgents);
 
 		return "admin_cp";
 	}
