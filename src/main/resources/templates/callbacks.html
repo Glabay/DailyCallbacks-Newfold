@@ -32,17 +32,17 @@
             <tr>
                 <td>
                     <label>
-                        <input type="date" th:field="${cbDataObject.dateOfCallback}">
+                        <input type="date" th:field="${cbDataObject.dateOfCallback}" required>
                     </label>
                 </td>
                 <td>
                     <label>
-                        <input type="time" th:field="*{time}">
+                        <input type="time" th:field="*{time}" required>
                     </label>
                 </td>
                 <td>
                     <label>
-                        <input type="text" th:field="*{callbackCase}">
+                        <input type="text" th:field="*{callbackCase}" required>
                     </label>
                 </td>
                 <td>
