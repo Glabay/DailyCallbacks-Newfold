@@ -21,9 +21,8 @@ public class WebSecurityConfiguration {
                     try {
                         requests
                                 .requestMatchers("/acp/**").hasRole("DEVELOPER")
-                                .requestMatchers("/admin/**").hasAnyRole("DEVELOPER", "ADMIN")
+                                .requestMatchers("/admin/**", "/lilblu/**").hasAnyRole("DEVELOPER", "ADMIN")
                                 .requestMatchers("/callbacks/**").hasRole("WBC")
-                                .requestMatchers("/lilblu/**").hasRole("DEVELOPER")
                                 .anyRequest().authenticated()
                                 .and()
                                 .formLogin().permitAll()
