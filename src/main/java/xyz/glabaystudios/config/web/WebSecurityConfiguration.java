@@ -24,7 +24,7 @@ public class WebSecurityConfiguration {
                                 .requestMatchers("/admin/**").hasAnyRole("DEVELOPER", "ADMIN")
                                 .requestMatchers("/callbacks/**").hasRole("WBC")
                                 .requestMatchers("/lilblu/**").hasRole("DEVELOPER")
-                                .anyRequest().permitAll()
+                                .anyRequest().authenticated()
                                 .and()
                                 .formLogin().permitAll()
                                 .and()
