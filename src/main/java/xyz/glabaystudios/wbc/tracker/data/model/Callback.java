@@ -31,7 +31,7 @@ public class Callback {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private String dateCompleted;
 	private String completedBy;
-	private Long timeCompleted;
+	private String timeCompleted;
 
 	private String volunteered;
 	private Boolean voluntold = Boolean.FALSE;
