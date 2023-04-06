@@ -1,9 +1,12 @@
 package xyz.glabaystudios.wbc.tracker.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import xyz.glabaystudios.utils.Logger;
 import xyz.glabaystudios.wbc.tracker.data.model.Agent;
 import xyz.glabaystudios.wbc.tracker.data.model.Callback;
 import xyz.glabaystudios.wbc.tracker.data.model.uncached.CallbackFilter;
@@ -13,7 +16,6 @@ import xyz.glabaystudios.wbc.tracker.services.AdminService;
 import xyz.glabaystudios.wbc.tracker.services.AgentService;
 import xyz.glabaystudios.wbc.tracker.services.CallbackService;
 
-import java.security.Principal;
 import java.util.*;
 
 @AllArgsConstructor
@@ -26,11 +28,13 @@ public class AdminController {
 	private final AdminService adminService;
 
 	@GetMapping("")
-	public String getAdminLandingPage(Principal principal) {
-//		if (Objects.isNull(principal)) {
-//			// There is no logged in user
-//			return "redirect:/login";
-//		}
+	public String getAdminLandingPage(HttpServletRequest request) {
+		Logger.getLogger().printStringMessageFormatted("Remote connection from user: %s (%s)", request.getRemoteUser(), request.getRemoteAddr());
+		// Check if we have a logged-in user
+		if (Objects.isNull(request.getRemoteUser()))
+			return "redirect:/login";
+		// Another Check if this user exists and if they have the right accesses
+
 		return "admin_cp";
 	}
 
@@ -109,9 +113,10 @@ public class AdminController {
 	@PostMapping(value="/add/agent")
 	public String addNewAgent(@ModelAttribute("newAgent") Agent newAgent) {
 		if (!Objects.isNull(newAgent)) {
+			String encryptedPin = new BCryptPasswordEncoder().encode(newAgent.getAgentPin());
 			Agent agent = new Agent();
 			agent.setAgentAccess(newAgent.getAgentAccess());
-			agent.setAgentPin(newAgent.getAgentPin());
+			agent.setAgentPin(encryptedPin);
 			agent.setAgentEmail(newAgent.getAgentEmail());
 			agent.setAgentUsername(newAgent.getAgentUsername());
 			agentService.save(agent);

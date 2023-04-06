@@ -1,11 +1,13 @@
 package xyz.glabaystudios.wbc.tracker.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import xyz.glabaystudios.utils.Logger;
 import xyz.glabaystudios.wbc.tracker.data.model.Agent;
 import xyz.glabaystudios.wbc.tracker.data.model.Callback;
 import xyz.glabaystudios.wbc.tracker.data.model.uncached.CallbackType;
@@ -28,7 +30,12 @@ public class CallbacksController {
 	private final AgentService agentService;
 
 	@GetMapping
-	public String getDailyCallbacks(Model model) {
+	public String getDailyCallbacks(HttpServletRequest request, Model model) {
+		Logger.getLogger().printStringMessageFormatted("Remote connection from user: %s (%s)", request.getRemoteUser(), request.getRemoteAddr());
+		// Check if we have a logged-in user
+		if (Objects.isNull(request.getRemoteUser()))
+			return "redirect:/login";
+
 		List<CallbackType> types = Arrays.stream(CallbackType.values()).toList();
 		// add in the available callback types
 		model.addAttribute("callbackTypes", types);
@@ -49,8 +56,7 @@ public class CallbacksController {
 		// a blank instance of the Object so the Thymeleaf template has something to model the input to when entering a new callback
 		Callback newCallback = new Callback();
 		// add in default variables
-		// TODO: Check the security context for the user, and get the agent's name to autofill
-		newCallback.setAgent("m.glabay");// temp value for testing
+		newCallback.setAgent(request.getRemoteUser());
 		// add the object to the model
 		model.addAttribute("cbDataObject", newCallback);
 

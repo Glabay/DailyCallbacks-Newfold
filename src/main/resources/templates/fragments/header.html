@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6" lang="en">
 <head>
     <!--  Scripts to preload  -->
     <link href="/webjars/bootstrap/5.2.3/css/bootstrap.css" rel="stylesheet"/>
@@ -18,7 +19,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                <li class="nav-item">
+                <li sec:authorize="hasAnyRole('ROLE_DEVELOPER', 'ROLE_SUPERVISOR')" class="nav-item">
                     <a class="nav-link" href="#" th:href="@{/admin}">Admin Dashboard</a>
                 </li>
                 <li class="nav-item">
@@ -29,14 +30,14 @@
                 </li>
             </ul>
         </div>
-<!--        <div class="d-flex flex.row.reverse">-->
-<!--            <div th:if="${#authorization.expression('isAuthenticated()')}">-->
-<!--                <a class="btn btn-primary" href="#" th:href="@{/api/auth/logout}">Logout</a>-->
-<!--            </div>-->
-<!--            <div th:unless="${#authorization.expression('isAuthenticated()')}">-->
-<!--                <a class="btn btn-primary" href="#" th:href="@{/login}">Login</a>-->
-<!--            </div>-->
-<!--        </div>-->
+        <div class="d-flex flex.row.reverse">
+            <div th:if="${#authorization.expression('isAuthenticated()')}">
+                <a class="btn btn-primary" href="#" th:href="@{/logout}">Logout</a>
+            </div>
+            <div th:unless="${#authorization.expression('isAuthenticated()')}">
+                <a class="btn btn-primary" href="#" th:href="@{/login}">Login</a>
+            </div>
+        </div>
     </div>
 </nav>
 </body>
