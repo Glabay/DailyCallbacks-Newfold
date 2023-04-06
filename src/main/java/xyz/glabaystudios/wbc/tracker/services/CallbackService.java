@@ -11,6 +11,7 @@ import xyz.glabaystudios.wbc.tracker.data.repo.CallbackRepository;
 
 import java.time.Month;
 import java.time.format.TextStyle;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -98,15 +99,36 @@ public class CallbackService {
 		return null;
 	}
 
-	public List<Callback> findOpenCallbacksForProvidedDate(String formattedDate) {
-		// start out with the list of callbacks that are not completed, that match the provided date
-		List<Callback> totalDailyCallbacks = callbackRepository.findByDateOfCallbackAndCompletedFalse(formattedDate);
-		// Next, grab the complete list of callbacks and loop over them to check them out
+	public List<Callback> findOpenCallbacksUpUntilProvidedDate(String formattedDate) {
+		// Create a storage list
+		List<Callback> totalDailyCallbacks = new ArrayList<>();
+		// First make sure that we have all callbacks up to the passed date
 		findAllOpenCallbacks().stream()
-				// We are only looking for callbacks with details
-				.filter(callback -> Objects.nonNull(callback.getDetails()) && !callback.getDetails().isEmpty())
+				// We are only looking for callbacks that do not surpass the provided dates
+				.filter(callback -> cachedCallbackBeforeProvidedDate(callback.getDateOfCallback(), formattedDate))
 				// for each of the open callbacks with details, we want to add them to the daily total, as these may have been on going
 				.forEach(totalDailyCallbacks::add);
 		return totalDailyCallbacks;
+	}
+
+	private boolean cachedCallbackBeforeProvidedDate(String dateToCheck, String formattedDate) {
+		int year = Integer.parseInt(formattedDate.split("-")[0]);
+		int month = Integer.parseInt(formattedDate.split("-")[1]);
+		int day = Integer.parseInt(formattedDate.split("-")[2]);
+
+		int yearToCheck = Integer.parseInt(dateToCheck.split("-")[0]);
+		int monthToCheck = Integer.parseInt(dateToCheck.split("-")[1]);
+		int dayToCheck = Integer.parseInt(dateToCheck.split("-")[2]);
+
+		// check if we are looking at this year
+		if (yearToCheck == year)
+			// check if we are looking at this month, or a past month
+			if (monthToCheck == month)
+				// lastly if we're looking at today, or earlier in the month
+				return dayToCheck <= day;
+			else
+				return monthToCheck < month;
+		else
+			return yearToCheck < year;
 	}
 }

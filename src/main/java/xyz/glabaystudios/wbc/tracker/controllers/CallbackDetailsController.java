@@ -1,5 +1,6 @@
 package xyz.glabaystudios.wbc.tracker.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +11,8 @@ import xyz.glabaystudios.wbc.tracker.services.CallbackService;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -54,9 +57,11 @@ public class CallbackDetailsController {
 	}
 
 	@PostMapping(value="/complete")
-	public String completeCallbackDetails(@RequestParam("id") Long callbackId) {
+	public String completeCallbackDetails(HttpServletRequest request, @RequestParam("id") Long callbackId) {
 		if (Objects.isNull(callbackId))
 			return "redirect:/error";
+		if (Objects.isNull(request.getRemoteUser()))
+			return "redirect:/login";
 		Callback callback = callbackService.findCallbackById(callbackId);
 		if (Objects.nonNull(callback)) {
 			Date todaysDate = Date.from(Instant.now());
@@ -64,9 +69,11 @@ public class CallbackDetailsController {
 			String todaysDateFormatted = dateFormat.format(todaysDate);
 
 			callback.setCompleted(true);
-			callback.setDateCompleted(todaysDateFormatted); // Today's date
-			callback.setCompletedBy("Developer"); // the logged-in user, who clicked the button
-			callback.setTimeCompleted(System.currentTimeMillis());
+			callback.setDateCompleted(todaysDateFormatted);
+			callback.setCompletedBy(request.getRemoteUser());
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+			LocalDateTime now = LocalDateTime.now();
+			callback.setTimeCompleted(dtf.format(now));
 			callbackService.save(callback);
 			return "redirect:/callbacks";
 		}
