@@ -77,16 +77,16 @@
             <div>
                 <form class="flex-filter-container" action="#" th:action="@{/admin/filters/apply}" th:object="${adminCallbackFilter}" method="get">
                     <label for="SpecificDay">Specific Day</label><br>
-                    <input id="SpecificDay" type="date" th:field="${adminCallbackFilter.specificDate}"><br><br>
+                    <input id="SpecificDay" type="date" th:field="${adminCallbackFilter.specificDate}" required><br><br>
                     <button type="submit" class="btn btn-primary">Apply Filter</button>
                 </form>
             </div>
             <div>
                 <form class="flex-filter-container" action="#" th:action="@{/admin/filters/apply}" th:object="${adminCallbackFilter}" method="get">
                     <label for="filterStartDay">Callbacks From</label><br>
-                    <input id="filterStartDay" type="date" th:field="${adminCallbackFilter.filterStartDay}"><br>
+                    <input id="filterStartDay" type="date" th:field="${adminCallbackFilter.filterStartDay}" required><br>
                     <label for="filterEndDay">Callbacks Up Until</label><br>
-                    <input id="filterEndDay" type="date" th:field="${adminCallbackFilter.filterEndDay}"><br><br>
+                    <input id="filterEndDay" type="date" th:field="${adminCallbackFilter.filterEndDay}" required><br><br>
                     <button type="submit" class="btn btn-primary">Apply Filter</button>
                 </form>
             </div>
